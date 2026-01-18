@@ -1,17 +1,3 @@
-# ---
-# jupyter:
-#   jupytext:
-#     text_representation:
-#       extension: .py
-#       format_name: percent
-#       format_version: '1.3'
-#       jupytext_version: 1.18.1
-#   kernelspec:
-#     display_name: Python 3
-#     language: python
-#     name: python3
-# ---
-
 # %% [markdown]
 # Plan is to isloate the most likely variables to predict a swing and a miss
 
@@ -19,6 +5,7 @@
 from pybaseball import statcast
 import pandas as pd
 import numpy as np
+
 
 # %%
 statcast(start_dt="2019-06-24", end_dt="2019-06-25").columns

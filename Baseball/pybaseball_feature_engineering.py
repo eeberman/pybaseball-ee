@@ -135,7 +135,11 @@ df_fe = df_fe.dropna(subset=["sz_bot", "sz_top"]).copy()
 stand_sign = df_fe["stand"].map({"R": -1, "L": 1})
 df_fe["plate_x_batter"] = df_fe["plate_x"] * stand_sign
 
-# Batter-relative release point (x flips, z does not)
+
+# Batter-relative pitching metrics (x flips, z does not)
+throw_sign = df_fe["p_throws"].map({"R": -1, "L": 1})
+df_fe["pfx_x_norm"] = df_fe["pfx_x"] * throw_sign
+
 df_fe["release_pos_x_batter"] = df_fe["release_pos_x"] * stand_sign
 df_fe["release_pos_z_batter"] = df_fe["release_pos_z"]
 
@@ -276,4 +280,38 @@ pivot2 = tabz.pivot_table(index="count_state", columns="z_out_bin", values="swst
 print("\nSWSTR rate by vertical out-of-zone bin (split by count)")
 display(pivot2)
 
+#%% Runner presence
+df_fe["runner_on_1b"] = df_fe["on_1b"].notna().astype("int8")
+df_fe["runner_on_2b"] = df_fe["on_2b"].notna().astype("int8")
+df_fe["runner_on_3b"] = df_fe["on_3b"].notna().astype("int8")
+
+df_fe["any_runner_on"] = (
+    (df_fe["runner_on_1b"] | df_fe["runner_on_2b"] | df_fe["runner_on_3b"])
+).astype("int8")
+
+df_fe["risp"] = ((df_fe["runner_on_2b"] | df_fe["runner_on_3b"])).astype("int8")
+df_fe["bases_loaded"] = (
+    (df_fe["runner_on_1b"] & df_fe["runner_on_2b"] & df_fe["runner_on_3b"])
+).astype("int8")
+#%% Score differential (batter relative, hitting team - fielding team)
+df_fe["batting_score_diff"] = np.where(
+    df_fe["inning_topbot"].eq("Top"),
+    df_fe["away_score"] - df_fe["home_score"],
+    df_fe["home_score"] - df_fe["away_score"]
+)
+
+# Bucket
+bins = [-np.inf, -5, -3, -1, 0, 2, 4, np.inf]
+labels = [
+    "trail_5plus",
+    "trail_4-3",
+    "trail_2-1",
+    "tied",
+    "lead_1-2",
+    "lead_3-4",
+    "lead_5plus",
+]
+df_fe["score_bucket"] = pd.cut(
+    df_fe["batting_score_diff"], bins=bins, labels=labels, include_lowest=True
+)
 #%% Current end

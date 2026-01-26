@@ -1,0 +1,20 @@
+{
+  "task": "step1_swing_vs_take",
+  "data_path": "data\\processed\\statcast_2023_step1_swing_take.parquet",
+  "train_end": "2023-08-31",
+  "test_start": "2023-09-01",
+  "test_end": "2023-09-30",
+  "n_train": 572585,
+  "n_test": 120035,
+  "accuracy": 0.794843170741867,
+  "log_loss": 0.42765342931926315,
+  "roc_auc": 0.8819092029125793,
+  "positive_rate_test": 0.47168742450118717,
+  "feature_count": 31,
+  "categorical_features": [
+    "p_throws",
+    "stand",
+    "count_state",
+    "score_bucket"
+  ]
+}

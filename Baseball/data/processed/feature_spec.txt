@@ -7,7 +7,7 @@ called_strike          116950
 any_swinging_strike     79822
 hit_by_pitch             2097
 
- FINAL COLUMNS (df_fe_final)
+FINAL COLUMNS (df_fe_final2)
 target_raw
 y_swing
 y_whiff
@@ -23,6 +23,15 @@ sz_top
 balls
 strikes
 outs_when_up
+release_extension
+release_pos_y
+spin_axis
+vx0
+vy0
+vz0
+ax
+ay
+az
 plate_x_batter
 release_pos_x_batter
 release_pos_z_batter
@@ -35,6 +44,9 @@ x_out_mag
 x_out_signed_batter
 z_out_signed
 zone_out_dist
+zone_height
+plate_z_rel
+z_out_signed_rel
 runner_on_1b
 runner_on_2b
 runner_on_3b
@@ -44,14 +56,19 @@ bases_loaded
 batting_score_diff
 score_bucket
 
- NULL AUDIT (df_fe_final, nonzero only)
+DROPPED FEATURE COLS DUE TO NULL SHARE
+None
+
+NULL AUDIT (df_fe_final2, nonzero only)
 y_whiff              373409
 release_spin_rate      3889
+spin_axis              3887
 y_swing                2097
 effective_speed        1060
+release_extension       939
 
- SHAPES
-df_fe_final:    (703264, 35)
-df_model_base:  (696932, 35)
-df_step1:       (696932, 35)
-df_step2:       (327804, 35)
+SHAPES
+df_fe_final2:   (703264, 47)
+df_model_base:  (696932, 47)
+df_step1:       (696932, 47)
+df_step2:       (327804, 47)

@@ -1,0 +1,752 @@
+{
+  "gain": [
+    {
+      "feature": "in_zone",
+      "value": 215.59490966796875
+    },
+    {
+      "feature": "zone_out_dist",
+      "value": 187.80279541015625
+    },
+    {
+      "feature": "strikes",
+      "value": 39.199337005615234
+    },
+    {
+      "feature": "z_out_signed",
+      "value": 39.00291442871094
+    },
+    {
+      "feature": "plate_z",
+      "value": 36.55125427246094
+    },
+    {
+      "feature": "plate_z_rel",
+      "value": 27.264503479003906
+    },
+    {
+      "feature": "two_strikes",
+      "value": 23.612316131591797
+    },
+    {
+      "feature": "plate_x_batter",
+      "value": 17.465946197509766
+    },
+    {
+      "feature": "x_out_mag",
+      "value": 16.97089385986328
+    },
+    {
+      "feature": "same_side",
+      "value": 15.38679313659668
+    },
+    {
+      "feature": "x_out_signed_batter",
+      "value": 12.572150230407715
+    },
+    {
+      "feature": "az",
+      "value": 12.302571296691895
+    },
+    {
+      "feature": "vy0",
+      "value": 11.741890907287598
+    },
+    {
+      "feature": "effective_speed",
+      "value": 9.865212440490723
+    },
+    {
+      "feature": "count_state_0-0",
+      "value": 9.151846885681152
+    },
+    {
+      "feature": "pfx_x_norm",
+      "value": 8.649200439453125
+    },
+    {
+      "feature": "stand_L",
+      "value": 8.443580627441406
+    },
+    {
+      "feature": "pfx_z",
+      "value": 8.384642601013184
+    },
+    {
+      "feature": "release_pos_x_batter",
+      "value": 8.272931098937988
+    },
+    {
+      "feature": "release_spin_rate",
+      "value": 7.867398262023926
+    },
+    {
+      "feature": "score_bucket_lead_5plus",
+      "value": 7.654471397399902
+    },
+    {
+      "feature": "release_pos_z_batter",
+      "value": 7.539114952087402
+    },
+    {
+      "feature": "vz0",
+      "value": 7.497274398803711
+    },
+    {
+      "feature": "stand_R",
+      "value": 7.479329586029053
+    },
+    {
+      "feature": "risp",
+      "value": 6.997464179992676
+    },
+    {
+      "feature": "spin_axis",
+      "value": 6.822304725646973
+    },
+    {
+      "feature": "count_state_3-2",
+      "value": 6.808520317077637
+    },
+    {
+      "feature": "outs_when_up",
+      "value": 6.690148830413818
+    },
+    {
+      "feature": "count_state_0-1",
+      "value": 6.625614643096924
+    },
+    {
+      "feature": "z_out_signed_rel",
+      "value": 6.504098892211914
+    },
+    {
+      "feature": "ax",
+      "value": 6.490862846374512
+    },
+    {
+      "feature": "count_state_3-1",
+      "value": 6.359434604644775
+    },
+    {
+      "feature": "vx0",
+      "value": 6.343338966369629
+    },
+    {
+      "feature": "sz_top",
+      "value": 6.336818218231201
+    },
+    {
+      "feature": "count_state_2-0",
+      "value": 6.325066089630127
+    },
+    {
+      "feature": "ay",
+      "value": 6.310110569000244
+    },
+    {
+      "feature": "release_pos_y",
+      "value": 6.276856422424316
+    },
+    {
+      "feature": "balls",
+      "value": 6.090328693389893
+    },
+    {
+      "feature": "runner_on_3b",
+      "value": 6.0697340965271
+    },
+    {
+      "feature": "score_bucket_lead_1-2",
+      "value": 6.052951812744141
+    },
+    {
+      "feature": "zone_height",
+      "value": 5.917964458465576
+    },
+    {
+      "feature": "any_runner_on",
+      "value": 5.910260200500488
+    },
+    {
+      "feature": "count_state_2-1",
+      "value": 5.8504109382629395
+    },
+    {
+      "feature": "count_state_0-2",
+      "value": 5.839585304260254
+    },
+    {
+      "feature": "batting_score_diff",
+      "value": 5.832202911376953
+    },
+    {
+      "feature": "bases_loaded",
+      "value": 5.767455577850342
+    },
+    {
+      "feature": "score_bucket_tied",
+      "value": 5.765815734863281
+    },
+    {
+      "feature": "sz_bot",
+      "value": 5.761742115020752
+    },
+    {
+      "feature": "release_extension",
+      "value": 5.754164695739746
+    },
+    {
+      "feature": "count_state_1-0",
+      "value": 5.673705101013184
+    },
+    {
+      "feature": "count_state_2-2",
+      "value": 5.655069351196289
+    },
+    {
+      "feature": "score_bucket_trail_5plus",
+      "value": 5.572020053863525
+    },
+    {
+      "feature": "score_bucket_trail_2-1",
+      "value": 5.484493732452393
+    },
+    {
+      "feature": "score_bucket_lead_3-4",
+      "value": 5.472939491271973
+    },
+    {
+      "feature": "score_bucket_trail_4-3",
+      "value": 5.435600757598877
+    },
+    {
+      "feature": "runner_on_2b",
+      "value": 5.417958736419678
+    },
+    {
+      "feature": "runner_on_1b",
+      "value": 5.202540874481201
+    },
+    {
+      "feature": "count_state_1-1",
+      "value": 5.140814304351807
+    },
+    {
+      "feature": "count_state_1-2",
+      "value": 5.054222106933594
+    },
+    {
+      "feature": "p_throws_L",
+      "value": 4.876193523406982
+    },
+    {
+      "feature": "count_state_3-0",
+      "value": 4.535317897796631
+    },
+    {
+      "feature": "p_throws_R",
+      "value": 2.9308767318725586
+    }
+  ],
+  "weight": [
+    {
+      "feature": "release_pos_x_batter",
+      "value": 2423.0
+    },
+    {
+      "feature": "plate_x_batter",
+      "value": 2337.0
+    },
+    {
+      "feature": "release_spin_rate",
+      "value": 2291.0
+    },
+    {
+      "feature": "release_pos_z_batter",
+      "value": 2192.0
+    },
+    {
+      "feature": "plate_z",
+      "value": 2109.0
+    },
+    {
+      "feature": "ay",
+      "value": 2048.0
+    },
+    {
+      "feature": "vx0",
+      "value": 1932.0
+    },
+    {
+      "feature": "vz0",
+      "value": 1930.0
+    },
+    {
+      "feature": "pfx_x_norm",
+      "value": 1900.0
+    },
+    {
+      "feature": "az",
+      "value": 1800.0
+    },
+    {
+      "feature": "spin_axis",
+      "value": 1772.0
+    },
+    {
+      "feature": "pfx_z",
+      "value": 1722.0
+    },
+    {
+      "feature": "ax",
+      "value": 1718.0
+    },
+    {
+      "feature": "vy0",
+      "value": 1695.0
+    },
+    {
+      "feature": "release_pos_y",
+      "value": 1679.0
+    },
+    {
+      "feature": "effective_speed",
+      "value": 1661.0
+    },
+    {
+      "feature": "sz_top",
+      "value": 1627.0
+    },
+    {
+      "feature": "plate_z_rel",
+      "value": 1610.0
+    },
+    {
+      "feature": "sz_bot",
+      "value": 1552.0
+    },
+    {
+      "feature": "zone_height",
+      "value": 1437.0
+    },
+    {
+      "feature": "batting_score_diff",
+      "value": 1015.0
+    },
+    {
+      "feature": "zone_out_dist",
+      "value": 1014.0
+    },
+    {
+      "feature": "release_extension",
+      "value": 574.0
+    },
+    {
+      "feature": "strikes",
+      "value": 570.0
+    },
+    {
+      "feature": "x_out_mag",
+      "value": 558.0
+    },
+    {
+      "feature": "balls",
+      "value": 336.0
+    },
+    {
+      "feature": "z_out_signed",
+      "value": 319.0
+    },
+    {
+      "feature": "outs_when_up",
+      "value": 291.0
+    },
+    {
+      "feature": "stand_L",
+      "value": 156.0
+    },
+    {
+      "feature": "any_runner_on",
+      "value": 150.0
+    },
+    {
+      "feature": "score_bucket_tied",
+      "value": 136.0
+    },
+    {
+      "feature": "runner_on_1b",
+      "value": 133.0
+    },
+    {
+      "feature": "runner_on_3b",
+      "value": 116.0
+    },
+    {
+      "feature": "count_state_0-1",
+      "value": 115.0
+    },
+    {
+      "feature": "risp",
+      "value": 114.0
+    },
+    {
+      "feature": "score_bucket_lead_1-2",
+      "value": 114.0
+    },
+    {
+      "feature": "count_state_2-2",
+      "value": 105.0
+    },
+    {
+      "feature": "count_state_0-0",
+      "value": 99.0
+    },
+    {
+      "feature": "score_bucket_trail_2-1",
+      "value": 98.0
+    },
+    {
+      "feature": "count_state_0-2",
+      "value": 97.0
+    },
+    {
+      "feature": "runner_on_2b",
+      "value": 96.0
+    },
+    {
+      "feature": "score_bucket_trail_4-3",
+      "value": 84.0
+    },
+    {
+      "feature": "in_zone",
+      "value": 82.0
+    },
+    {
+      "feature": "count_state_1-2",
+      "value": 80.0
+    },
+    {
+      "feature": "count_state_1-1",
+      "value": 79.0
+    },
+    {
+      "feature": "count_state_2-1",
+      "value": 75.0
+    },
+    {
+      "feature": "count_state_1-0",
+      "value": 74.0
+    },
+    {
+      "feature": "x_out_signed_batter",
+      "value": 72.0
+    },
+    {
+      "feature": "z_out_signed_rel",
+      "value": 66.0
+    },
+    {
+      "feature": "bases_loaded",
+      "value": 66.0
+    },
+    {
+      "feature": "score_bucket_lead_3-4",
+      "value": 66.0
+    },
+    {
+      "feature": "same_side",
+      "value": 49.0
+    },
+    {
+      "feature": "count_state_3-2",
+      "value": 40.0
+    },
+    {
+      "feature": "count_state_2-0",
+      "value": 35.0
+    },
+    {
+      "feature": "two_strikes",
+      "value": 29.0
+    },
+    {
+      "feature": "count_state_3-1",
+      "value": 28.0
+    },
+    {
+      "feature": "p_throws_L",
+      "value": 26.0
+    },
+    {
+      "feature": "stand_R",
+      "value": 21.0
+    },
+    {
+      "feature": "count_state_3-0",
+      "value": 13.0
+    },
+    {
+      "feature": "score_bucket_lead_5plus",
+      "value": 7.0
+    },
+    {
+      "feature": "score_bucket_trail_5plus",
+      "value": 6.0
+    },
+    {
+      "feature": "p_throws_R",
+      "value": 2.0
+    }
+  ],
+  "cover": [
+    {
+      "feature": "p_throws_R",
+      "value": 25516.79296875
+    },
+    {
+      "feature": "count_state_3-0",
+      "value": 14830.587890625
+    },
+    {
+      "feature": "p_throws_L",
+      "value": 14008.3525390625
+    },
+    {
+      "feature": "in_zone",
+      "value": 9020.4912109375
+    },
+    {
+      "feature": "two_strikes",
+      "value": 7146.3955078125
+    },
+    {
+      "feature": "bases_loaded",
+      "value": 6330.173828125
+    },
+    {
+      "feature": "z_out_signed_rel",
+      "value": 6194.98095703125
+    },
+    {
+      "feature": "count_state_0-0",
+      "value": 6133.09765625
+    },
+    {
+      "feature": "strikes",
+      "value": 5006.7734375
+    },
+    {
+      "feature": "sz_top",
+      "value": 4433.31982421875
+    },
+    {
+      "feature": "release_extension",
+      "value": 4335.1875
+    },
+    {
+      "feature": "zone_out_dist",
+      "value": 3918.305908203125
+    },
+    {
+      "feature": "spin_axis",
+      "value": 3870.197998046875
+    },
+    {
+      "feature": "az",
+      "value": 3866.963134765625
+    },
+    {
+      "feature": "sz_bot",
+      "value": 3842.20556640625
+    },
+    {
+      "feature": "outs_when_up",
+      "value": 3798.527099609375
+    },
+    {
+      "feature": "zone_height",
+      "value": 3709.56201171875
+    },
+    {
+      "feature": "x_out_mag",
+      "value": 3521.528564453125
+    },
+    {
+      "feature": "effective_speed",
+      "value": 3268.12939453125
+    },
+    {
+      "feature": "score_bucket_trail_4-3",
+      "value": 3263.578125
+    },
+    {
+      "feature": "vy0",
+      "value": 3229.1865234375
+    },
+    {
+      "feature": "score_bucket_tied",
+      "value": 3117.357421875
+    },
+    {
+      "feature": "risp",
+      "value": 2997.702880859375
+    },
+    {
+      "feature": "count_state_2-1",
+      "value": 2987.55029296875
+    },
+    {
+      "feature": "batting_score_diff",
+      "value": 2967.3583984375
+    },
+    {
+      "feature": "plate_z",
+      "value": 2926.33984375
+    },
+    {
+      "feature": "ay",
+      "value": 2896.064208984375
+    },
+    {
+      "feature": "pfx_z",
+      "value": 2868.68505859375
+    },
+    {
+      "feature": "plate_z_rel",
+      "value": 2824.75146484375
+    },
+    {
+      "feature": "ax",
+      "value": 2807.98779296875
+    },
+    {
+      "feature": "pfx_x_norm",
+      "value": 2679.510986328125
+    },
+    {
+      "feature": "count_state_1-2",
+      "value": 2672.17333984375
+    },
+    {
+      "feature": "vx0",
+      "value": 2639.529541015625
+    },
+    {
+      "feature": "release_pos_x_batter",
+      "value": 2557.739990234375
+    },
+    {
+      "feature": "z_out_signed",
+      "value": 2542.774658203125
+    },
+    {
+      "feature": "count_state_0-2",
+      "value": 2537.94873046875
+    },
+    {
+      "feature": "release_spin_rate",
+      "value": 2450.754638671875
+    },
+    {
+      "feature": "stand_R",
+      "value": 2433.06982421875
+    },
+    {
+      "feature": "plate_x_batter",
+      "value": 2413.85302734375
+    },
+    {
+      "feature": "vz0",
+      "value": 2334.929931640625
+    },
+    {
+      "feature": "release_pos_y",
+      "value": 2306.993408203125
+    },
+    {
+      "feature": "release_pos_z_batter",
+      "value": 2226.48046875
+    },
+    {
+      "feature": "x_out_signed_batter",
+      "value": 2071.605224609375
+    },
+    {
+      "feature": "stand_L",
+      "value": 2056.075439453125
+    },
+    {
+      "feature": "any_runner_on",
+      "value": 1835.890869140625
+    },
+    {
+      "feature": "balls",
+      "value": 1632.1787109375
+    },
+    {
+      "feature": "count_state_2-0",
+      "value": 1621.914794921875
+    },
+    {
+      "feature": "count_state_0-1",
+      "value": 1559.619140625
+    },
+    {
+      "feature": "count_state_3-1",
+      "value": 1530.1456298828125
+    },
+    {
+      "feature": "count_state_1-1",
+      "value": 1062.9256591796875
+    },
+    {
+      "feature": "score_bucket_lead_5plus",
+      "value": 975.6546020507812
+    },
+    {
+      "feature": "same_side",
+      "value": 939.3560180664062
+    },
+    {
+      "feature": "count_state_3-2",
+      "value": 867.8692626953125
+    },
+    {
+      "feature": "runner_on_3b",
+      "value": 805.7117309570312
+    },
+    {
+      "feature": "count_state_1-0",
+      "value": 800.3427124023438
+    },
+    {
+      "feature": "score_bucket_trail_2-1",
+      "value": 663.0228271484375
+    },
+    {
+      "feature": "count_state_2-2",
+      "value": 582.7505493164062
+    },
+    {
+      "feature": "score_bucket_lead_1-2",
+      "value": 551.6307983398438
+    },
+    {
+      "feature": "score_bucket_trail_5plus",
+      "value": 516.0045166015625
+    },
+    {
+      "feature": "runner_on_1b",
+      "value": 515.9721069335938
+    },
+    {
+      "feature": "runner_on_2b",
+      "value": 491.83203125
+    },
+    {
+      "feature": "score_bucket_lead_3-4",
+      "value": 257.9189147949219
+    }
+  ]
+}

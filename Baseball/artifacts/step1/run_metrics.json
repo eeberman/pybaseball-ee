@@ -7,9 +7,9 @@
   "early_stopping_rounds": 50,
   "num_boost_round": 2000,
   "best_iteration_used": 600,
-  "accuracy": 0.7993643596605136,
-  "logloss": 0.42010669876111156,
-  "roc_auc": 0.8864260467311141,
+  "accuracy": 0.8013372839647886,
+  "logloss": 0.41661151093715354,
+  "roc_auc": 0.8882453892822346,
   "n_train": 446036,
   "n_val": 111509,
   "n_test": 139387,
@@ -19,7 +19,7 @@
     "count_state",
     "score_bucket"
   ],
-  "numeric_cols_count": 27,
+  "numeric_cols_count": 39,
   "params": {
     "objective": "binary:logistic",
     "eval_metric": "logloss",

@@ -29,6 +29,7 @@ IN_PATH = Path("data/processed") / f"statcast_{START_DT}_{END_DT}_features.parqu
 BASE_PATH = Path("data/processed") / "statcast_model_base.parquet"
 STEP1_PATH = Path("data/processed") / "statcast_step1_swing_take.parquet"
 STEP2_PATH = Path("data/processed") / "statcast_step2_whiff_contact.parquet"
+STEP2_FILTERED_PATH = Path("data/processed") / "statcast_step2_whiff_contact_filtered.parquet"
 
 ART_DIR = Path("artifacts/datasets")
 ART_DIR.mkdir(parents=True, exist_ok=True)
@@ -105,6 +106,24 @@ OPTIONAL_IMPUTE = [
     "spin_axis_cos",
     "vx0", "vy0", "vz0",
     "ax", "ay", "az",
+    # Cluster physical statistics (may have nulls for unseen clusters in val/test)
+    "cluster_mean_velocity",
+    "cluster_mean_eff_velocity",
+    "cluster_mean_spin",
+    "cluster_mean_pfx_x",
+    "cluster_mean_pfx_z",
+    "cluster_mean_extension",
+    # Trajectory / deception features
+    "time_to_plate",
+    "late_break_z",
+    "late_break_x",
+    "approach_angle_z",
+    "approach_angle_x",
+    "accel_magnitude",
+    # Deviation from cluster mean
+    "velocity_vs_cluster",
+    "spin_vs_cluster",
+    "pfx_z_vs_cluster",
 ]
 
 OPTIONAL_IMPUTE = [c for c in OPTIONAL_IMPUTE if c in df2.columns]
@@ -148,8 +167,46 @@ df_step2 = df_model_base.dropna(subset=["y_whiff"]).copy()
 df_step2["y_whiff"] = df_step2["y_whiff"].astype(int)
 
 # %%
-# === STEP 1 → STEP 2 TRANSITION VALIDATION ===
-print("\n=== STEP 1 → STEP 2 TRANSITION VALIDATION ===")
+# === FILTERED STEP 2: EXCLUDE OUT-OF-ZONE BREAKING BALLS ===
+# These pitches have ~50% whiff rate (coin flip) and add noise to the model
+
+# Breaking ball types (sliders, curveballs, sweepers, etc.)
+BREAKING_TYPES = ["SL", "CU", "ST", "KC", "SV", "CB"]
+
+print("\n=== CREATING FILTERED STEP 2 DATASET ===")
+
+if "pitch_type_mode" in df_step2.columns and "in_zone" in df_step2.columns:
+    # Identify chaotic pitches: out-of-zone breaking balls
+    is_out_of_zone = df_step2["in_zone"] == 0
+    is_breaking_ball = df_step2["pitch_type_mode"].isin(BREAKING_TYPES)
+    is_chaotic = is_out_of_zone & is_breaking_ball
+
+    # Create filtered dataset
+    df_step2_filtered = df_step2[~is_chaotic].copy()
+
+    print(f"Total Step 2 rows: {len(df_step2):,}")
+    print(f"Out-of-zone breaking balls removed: {is_chaotic.sum():,} ({is_chaotic.mean()*100:.1f}%)")
+    print(f"Filtered Step 2 rows: {len(df_step2_filtered):,}")
+
+    # Compare whiff rates
+    whiff_rate_full = df_step2["y_whiff"].mean()
+    whiff_rate_filtered = df_step2_filtered["y_whiff"].mean()
+    whiff_rate_chaotic = df_step2.loc[is_chaotic, "y_whiff"].mean() if is_chaotic.sum() > 0 else 0
+
+    print(f"\nWhiff rates:")
+    print(f"  Full dataset: {whiff_rate_full*100:.1f}%")
+    print(f"  Filtered dataset: {whiff_rate_filtered*100:.1f}%")
+    print(f"  Removed (chaotic): {whiff_rate_chaotic*100:.1f}%")
+
+    # Split distribution for filtered
+    print(f"\nFiltered dataset split distribution: {df_step2_filtered['split'].value_counts().to_dict()}")
+else:
+    print("WARNING: pitch_type_mode or in_zone not available, skipping filtered dataset")
+    df_step2_filtered = None
+
+# %%
+# === STEP 1 -> STEP 2 TRANSITION VALIDATION ===
+print("\n=== STEP 1 -> STEP 2 TRANSITION VALIDATION ===")
 
 print(f"\nModel base: {len(df_model_base)} rows")
 
@@ -228,6 +285,11 @@ print(f"  - {BASE_PATH}")
 print(f"  - {STEP1_PATH}")
 print(f"  - {STEP2_PATH}")
 
+# Save filtered dataset if created
+if df_step2_filtered is not None:
+    df_step2_filtered.to_parquet(STEP2_FILTERED_PATH, index=False)
+    print(f"  - {STEP2_FILTERED_PATH}")
+
 # %%
 # Save dataset spec
 spec = {
@@ -236,21 +298,29 @@ spec = {
         "model_base": str(BASE_PATH),
         "step1": str(STEP1_PATH),
         "step2": str(STEP2_PATH),
+        "step2_filtered": str(STEP2_FILTERED_PATH) if df_step2_filtered is not None else None,
     },
     "row_counts": {
         "input": input_rows,
         "model_base": len(df_model_base),
         "step1": len(df_step1),
         "step2": len(df_step2),
+        "step2_filtered": len(df_step2_filtered) if df_step2_filtered is not None else None,
     },
     "step1_y_swing_distribution": df_step1["y_swing"].value_counts(normalize=True).to_dict(),
     "step2_y_whiff_distribution": df_step2["y_whiff"].value_counts(normalize=True).to_dict(),
+    "step2_filtered_y_whiff_distribution": df_step2_filtered["y_whiff"].value_counts(normalize=True).to_dict() if df_step2_filtered is not None else None,
     "step1_split_counts": df_step1["split"].value_counts().to_dict(),
     "step2_split_counts": df_step2["split"].value_counts().to_dict(),
+    "step2_filtered_split_counts": df_step2_filtered["split"].value_counts().to_dict() if df_step2_filtered is not None else None,
     "columns": {
         "model_base": df_model_base.columns.tolist(),
         "step1": df_step1.columns.tolist(),
         "step2": df_step2.columns.tolist(),
+    },
+    "filtering": {
+        "breaking_types_excluded": BREAKING_TYPES,
+        "chaotic_rows_removed": int(is_chaotic.sum()) if df_step2_filtered is not None else None,
     },
 }
 

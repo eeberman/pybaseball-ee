@@ -32,7 +32,10 @@ from sklearn.metrics import (
     average_precision_score,
     confusion_matrix,
     classification_report,
+    brier_score_loss,
 )
+from sklearn.calibration import CalibratedClassifierCV, calibration_curve
+import matplotlib.pyplot as plt
 
 pd.set_option("display.max_columns", 200)
 pd.set_option("display.width", None)
@@ -82,7 +85,10 @@ SPLIT_COLS = ["split"]
 EXCLUDE_COLS = ID_COLS + TARGET_COLS + SPLIT_COLS
 
 # Categorical columns that need special handling
-CATEGORICAL_COLS = ["p_throws", "stand", "count_state", "score_bucket", "pitch_cluster_name", "pitch_type_mode"]
+# NOTE: pitch_cluster_name excluded - too high cardinality (3700+ unique values)
+#       It's pitcher-specific and would cause memory issues with one-hot encoding
+CATEGORICAL_COLS = ["p_throws", "stand", "count_state", "score_bucket", "pitch_type_mode"]
+HIGH_CARDINALITY_EXCLUDE = ["pitch_cluster_name"]  # Documented for future reference
 
 # Get feature columns
 all_cols = df_step1.columns.tolist()
@@ -103,6 +109,11 @@ print(f"Categorical features ({len(CAT_FEATURE_COLS)}): {CAT_FEATURE_COLS}")
 
 # %%
 # Prepare features - one-hot encode categoricals
+def sanitize_feature_name(name: str) -> str:
+    """Sanitize feature names for XGBoost (no [, ], or <)."""
+    return name.replace("[", "_").replace("]", "_").replace("<", "_lt_")
+
+
 def prepare_features(df: pd.DataFrame, fit_encoder: bool = False) -> tuple[pd.DataFrame, list[str]]:
     """Prepare feature matrix with one-hot encoded categoricals."""
     X = df[NUMERIC_FEATURE_COLS].copy()
@@ -117,6 +128,9 @@ def prepare_features(df: pd.DataFrame, fit_encoder: bool = False) -> tuple[pd.Da
         if cat_col in df.columns and df[cat_col].notna().any():
             dummies = pd.get_dummies(df[cat_col], prefix=cat_col, dummy_na=True)
             X = pd.concat([X, dummies], axis=1)
+
+    # Sanitize feature names for XGBoost
+    X.columns = [sanitize_feature_name(c) for c in X.columns]
 
     feature_names = X.columns.tolist()
     return X, feature_names
@@ -200,13 +214,19 @@ params1 = {
     "seed": 42,
 }
 
+# Model 2 parameters with class imbalance correction and regularization
+# Class ratio: ~76.5% contact, ~23.5% whiff -> scale_pos_weight ~= 3.26
+# Reduced depth and added regularization to combat overfitting
 params2 = {
     "objective": "binary:logistic",
     "eval_metric": ["logloss", "auc"],
-    "max_depth": 6,
+    "max_depth": 4,           # Reduced from 6 for better generalization
     "eta": 0.1,
-    "subsample": 0.8,
+    "subsample": 0.7,         # Reduced from 0.8
     "colsample_bytree": 0.8,
+    "min_child_weight": 5,    # New: prevents overfitting to small partitions
+    "gamma": 0.1,             # New: minimum loss reduction for splits
+    "scale_pos_weight": 3.26, # Corrects for class imbalance (contacts/whiffs)
     "seed": 42,
 }
 
@@ -266,21 +286,23 @@ pred1_val = (pred1_val_prob > THRESHOLD_1).astype(int)
 pred1_test = (pred1_test_prob > THRESHOLD_1).astype(int)
 
 def print_metrics(y_true, y_pred, y_prob, label: str):
-    """Print classification metrics."""
+    """Print classification metrics including Brier score for calibration."""
     acc = accuracy_score(y_true, y_pred)
     roc_auc = roc_auc_score(y_true, y_prob)
     pr_auc = average_precision_score(y_true, y_prob)
+    brier = brier_score_loss(y_true, y_prob)
     cm = confusion_matrix(y_true, y_pred)
 
     print(f"\n{label}:")
     print(f"  Accuracy: {acc:.4f}")
     print(f"  ROC-AUC: {roc_auc:.4f}")
     print(f"  PR-AUC: {pr_auc:.4f}")
+    print(f"  Brier Score: {brier:.4f}")
     print(f"  Confusion Matrix:")
     print(f"    TN={cm[0,0]:,} FP={cm[0,1]:,}")
     print(f"    FN={cm[1,0]:,} TP={cm[1,1]:,}")
 
-    return {"accuracy": acc, "roc_auc": roc_auc, "pr_auc": pr_auc}
+    return {"accuracy": acc, "roc_auc": roc_auc, "pr_auc": pr_auc, "brier_score": brier}
 
 m1_train = print_metrics(y_train1, pred1_train, pred1_train_prob, "Train")
 m1_val = print_metrics(y_val1, pred1_val, pred1_val_prob, "Validation (2023 Sep-Oct)")
@@ -302,6 +324,132 @@ pred2_test = (pred2_test_prob > THRESHOLD_2).astype(int)
 m2_train = print_metrics(y_train2, pred2_train, pred2_train_prob, "Train")
 m2_val = print_metrics(y_val2, pred2_val, pred2_val_prob, "Validation (2023 Sep-Oct)")
 m2_test = print_metrics(y_test2, pred2_test, pred2_test_prob, "Test (2024)")
+
+# %%
+# === MODEL 2 ZONE-AWARE DIAGNOSTICS ===
+print("\n" + "="*60)
+print("=== MODEL 2 PERFORMANCE BY ZONE ===")
+print("="*60)
+
+# Breaking ball types for diagnostic purposes
+BREAKING_TYPES = ["SL", "CU", "ST", "KC", "SV", "CB"]
+
+# Store zone metrics for later
+zone_metrics = {}
+
+# In-zone predictions (test set)
+if "in_zone" in test2.columns:
+    in_zone_mask_test = test2["in_zone"] == 1
+    out_zone_mask_test = test2["in_zone"] == 0
+
+    print(f"\nTest set breakdown:")
+    print(f"  In-zone: {in_zone_mask_test.sum():,} ({in_zone_mask_test.mean()*100:.1f}%)")
+    print(f"  Out-of-zone: {out_zone_mask_test.sum():,} ({out_zone_mask_test.mean()*100:.1f}%)")
+
+    # In-zone metrics
+    if in_zone_mask_test.sum() > 100:
+        y_test2_in = y_test2[in_zone_mask_test]
+        pred2_test_in = pred2_test[in_zone_mask_test]
+        pred2_test_prob_in = pred2_test_prob[in_zone_mask_test]
+
+        print(f"\n  In-zone whiff rate: {y_test2_in.mean()*100:.1f}%")
+        m2_in_zone = print_metrics(y_test2_in, pred2_test_in, pred2_test_prob_in, "In-Zone (test)")
+        zone_metrics["in_zone"] = m2_in_zone
+
+    # Out-of-zone metrics
+    if out_zone_mask_test.sum() > 100:
+        y_test2_out = y_test2[out_zone_mask_test]
+        pred2_test_out = pred2_test[out_zone_mask_test]
+        pred2_test_prob_out = pred2_test_prob[out_zone_mask_test]
+
+        print(f"\n  Out-of-zone whiff rate: {y_test2_out.mean()*100:.1f}%")
+        m2_out_zone = print_metrics(y_test2_out, pred2_test_out, pred2_test_prob_out, "Out-of-Zone (test)")
+        zone_metrics["out_of_zone"] = m2_out_zone
+
+    # Breaking ball out-of-zone (the chaotic subset)
+    if "pitch_type_mode" in test2.columns:
+        breaking_ooz_mask = out_zone_mask_test & test2["pitch_type_mode"].isin(BREAKING_TYPES)
+        if breaking_ooz_mask.sum() > 100:
+            y_test2_breaking = y_test2[breaking_ooz_mask]
+            pred2_test_breaking = pred2_test[breaking_ooz_mask]
+            pred2_test_prob_breaking = pred2_test_prob[breaking_ooz_mask]
+
+            print(f"\n  Out-of-zone breaking balls: {breaking_ooz_mask.sum():,} ({breaking_ooz_mask.sum()/len(test2)*100:.1f}% of test)")
+            print(f"  OOZ breaking ball whiff rate: {y_test2_breaking.mean()*100:.1f}%")
+            m2_breaking_ooz = print_metrics(y_test2_breaking, pred2_test_breaking, pred2_test_prob_breaking, "Out-of-Zone Breaking Balls (chaotic)")
+            zone_metrics["ooz_breaking"] = m2_breaking_ooz
+
+        # Non-breaking out-of-zone for comparison
+        non_breaking_ooz_mask = out_zone_mask_test & ~test2["pitch_type_mode"].isin(BREAKING_TYPES)
+        if non_breaking_ooz_mask.sum() > 100:
+            y_test2_non_breaking = y_test2[non_breaking_ooz_mask]
+            pred2_test_non_breaking = pred2_test[non_breaking_ooz_mask]
+            pred2_test_prob_non_breaking = pred2_test_prob[non_breaking_ooz_mask]
+
+            print(f"\n  Out-of-zone non-breaking: {non_breaking_ooz_mask.sum():,}")
+            print(f"  OOZ non-breaking whiff rate: {y_test2_non_breaking.mean()*100:.1f}%")
+            m2_non_breaking_ooz = print_metrics(y_test2_non_breaking, pred2_test_non_breaking, pred2_test_prob_non_breaking, "Out-of-Zone Non-Breaking")
+            zone_metrics["ooz_non_breaking"] = m2_non_breaking_ooz
+else:
+    print("WARNING: in_zone column not found in test2, skipping zone diagnostics")
+
+# %%
+# === MODEL 2 PROBABILITY CALIBRATION ===
+print("\n=== MODEL 2 PROBABILITY CALIBRATION (ISOTONIC) ===")
+
+# Fit isotonic calibration on validation set
+from sklearn.isotonic import IsotonicRegression
+
+calibrator = IsotonicRegression(out_of_bounds="clip")
+calibrator.fit(pred2_val_prob, y_val2)
+
+# Apply calibration to get calibrated probabilities
+pred2_val_calibrated = calibrator.predict(pred2_val_prob)
+pred2_test_calibrated = calibrator.predict(pred2_test_prob)
+
+# Evaluate calibration improvement
+brier_val_uncal = brier_score_loss(y_val2, pred2_val_prob)
+brier_val_cal = brier_score_loss(y_val2, pred2_val_calibrated)
+brier_test_uncal = brier_score_loss(y_test2, pred2_test_prob)
+brier_test_cal = brier_score_loss(y_test2, pred2_test_calibrated)
+
+print(f"\nBrier Score (lower is better):")
+print(f"  Val uncalibrated:  {brier_val_uncal:.4f}")
+print(f"  Val calibrated:    {brier_val_cal:.4f} ({(brier_val_uncal - brier_val_cal)/brier_val_uncal*100:.1f}% improvement)")
+print(f"  Test uncalibrated: {brier_test_uncal:.4f}")
+print(f"  Test calibrated:   {brier_test_cal:.4f} ({(brier_test_uncal - brier_test_cal)/brier_test_uncal*100:.1f}% improvement)")
+
+# Generate calibration curve plot
+CALIBRATION_PLOT_PATH = TRAINING_DIR / "calibration_curve_model2.png"
+
+fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+
+# Compute calibration curves
+n_bins = 10
+prob_true_uncal, prob_pred_uncal = calibration_curve(y_test2, pred2_test_prob, n_bins=n_bins)
+prob_true_cal, prob_pred_cal = calibration_curve(y_test2, pred2_test_calibrated, n_bins=n_bins)
+
+ax.plot([0, 1], [0, 1], "k--", label="Perfectly calibrated")
+ax.plot(prob_pred_uncal, prob_true_uncal, "s-", label=f"Uncalibrated (Brier={brier_test_uncal:.4f})")
+ax.plot(prob_pred_cal, prob_true_cal, "o-", label=f"Calibrated (Brier={brier_test_cal:.4f})")
+ax.set_xlabel("Mean predicted probability")
+ax.set_ylabel("Fraction of positives (whiffs)")
+ax.set_title("Model 2 Calibration Curve (Test Set)")
+ax.legend(loc="lower right")
+ax.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig(CALIBRATION_PLOT_PATH, dpi=150)
+plt.close()
+print(f"\nSaved calibration curve: {CALIBRATION_PLOT_PATH}")
+
+# Store calibration metrics for later
+m2_calibration = {
+    "brier_val_uncalibrated": float(brier_val_uncal),
+    "brier_val_calibrated": float(brier_val_cal),
+    "brier_test_uncalibrated": float(brier_test_uncal),
+    "brier_test_calibrated": float(brier_test_cal),
+}
 
 # %%
 # === CASCADE EVALUATION ===
@@ -422,6 +570,33 @@ if unreachable.sum() > 0:
     print(f"Whiff predictions on unreachable: {unreachable_whiff_pred.to_dict()}")
 
 # %%
+# === FEATURE IMPORTANCE (MODEL 2) ===
+print("\n=== MODEL 2 TOP FEATURE IMPORTANCES ===")
+
+# Get feature importance scores
+importance_scores = model2.get_score(importance_type="gain")
+
+# Sort by importance
+sorted_importance = sorted(importance_scores.items(), key=lambda x: x[1], reverse=True)
+
+# Print top 20 features
+print("\nTop 20 features by gain:")
+for i, (feat, score) in enumerate(sorted_importance[:20], 1):
+    print(f"  {i:2d}. {feat}: {score:.2f}")
+
+# Check if cluster features are being used
+cluster_features = [f for f, _ in sorted_importance if "cluster_" in f.lower()]
+print(f"\nCluster-related features in model: {len(cluster_features)}")
+if cluster_features:
+    print(f"  {cluster_features[:10]}...")
+
+# Save feature importance to file
+IMPORTANCE_PATH = TRAINING_DIR / "feature_importance_model2.json"
+with open(IMPORTANCE_PATH, "w") as f:
+    json.dump(dict(sorted_importance), f, indent=2)
+print(f"Saved feature importance: {IMPORTANCE_PATH}")
+
+# %%
 # === YEAR-OVER-YEAR COMPARISON ===
 print("\n=== YEAR-OVER-YEAR COMPARISON ===")
 print("Comparing validation (2023 Sep-Oct) vs test (2024):")
@@ -443,6 +618,12 @@ model1.save_model(MODEL1_PATH)
 model2.save_model(MODEL2_PATH)
 print(f"Saved: {MODEL1_PATH}")
 print(f"Saved: {MODEL2_PATH}")
+
+# Save calibrator for Model 2
+import joblib
+CALIBRATOR_PATH = MODEL_DIR / "model2_calibrator.joblib"
+joblib.dump(calibrator, CALIBRATOR_PATH)
+print(f"Saved: {CALIBRATOR_PATH}")
 
 # %%
 # Save model config for inference
@@ -480,6 +661,9 @@ metrics = {
         "val": m2_val,
         "test": m2_test,
         "best_iteration": int(model2.best_iteration),
+        "calibration": m2_calibration,
+        "params": {k: v for k, v in params2.items() if k not in ["objective", "eval_metric"]},
+        "zone_diagnostics": zone_metrics if zone_metrics else None,
     },
     "cascade": {
         "test_size": int(len(test_all)),

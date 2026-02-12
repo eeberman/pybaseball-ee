@@ -53,10 +53,12 @@ print(f"Split distribution (input): {split_counts_in.to_dict()}")
 null_before = df_raw.isna().sum()
 
 # %%
-df = df_raw.copy()
+# Work directly on df_raw to avoid memory copies
+df = df_raw  # Reference, not copy
+del df_raw  # Free the reference name
 
 df["game_date"] = pd.to_datetime(df["game_date"], errors="coerce")
-df = df.dropna(subset=["game_date"]).copy()
+df = df.dropna(subset=["game_date"])
 print(f"After game_date null drop: {len(df)} rows ({len(df)/input_rows*100:.1f}%)")
 
 # %%
@@ -79,13 +81,14 @@ rows_before_core_drop = len(df)
 df = df.dropna(subset=[
     "plate_x", "plate_z", "p_throws", "stand", "balls", "strikes",
     "release_pos_x", "release_pos_z", "pfx_x", "pfx_z", "sz_bot", "sz_top",
-]).copy()
+])
 print(f"After core null drop: {len(df)} rows ({len(df)/rows_before_core_drop*100:.1f}%)")
 
 # %%
-# Batter-relative engineering
+# Batter-relative engineering (work in-place on df)
 
-df_fe = df.copy()
+df_fe = df  # Reference, not copy
+del df  # Free the reference name
 
 stand_sign = df_fe["stand"].map({"R": -1, "L": 1})
 throw_sign = df_fe["p_throws"].map({"R": -1, "L": 1})
@@ -171,6 +174,109 @@ if "spin_axis" in df_fe.columns:
     df_fe["spin_axis_cos"] = np.cos(np.deg2rad(axis)).astype("float32")
 
 # %%
+# === CLUSTER PHYSICAL STATISTICS ===
+# Encode clusters by their physical characteristics (computed from training data only)
+# This captures "what kind of pitch is this" without using outcome data
+
+if "pitch_cluster_name" in df_fe.columns and df_fe["pitch_cluster_name"].notna().any():
+    print("\n=== COMPUTING CLUSTER PHYSICAL STATISTICS ===")
+
+    # Only compute stats from training data to avoid leakage
+    train_mask = df_fe["split"] == "train"
+    train_data = df_fe[train_mask]
+
+    # Physical columns to aggregate per cluster
+    CLUSTER_PHYS_COLS = [
+        ("release_speed", "cluster_mean_velocity"),
+        ("effective_speed", "cluster_mean_eff_velocity"),
+        ("release_spin_rate", "cluster_mean_spin"),
+        ("pfx_x", "cluster_mean_pfx_x"),
+        ("pfx_z", "cluster_mean_pfx_z"),
+        ("release_extension", "cluster_mean_extension"),
+    ]
+
+    # Compute cluster means from training data
+    cluster_stats = {}
+    for src_col, dst_col in CLUSTER_PHYS_COLS:
+        if src_col in train_data.columns:
+            stat = train_data.groupby("pitch_cluster_name")[src_col].mean()
+            cluster_stats[dst_col] = stat
+            print(f"  Computed {dst_col} for {len(stat)} clusters")
+
+    # Map cluster stats back to all rows (train, val, test)
+    for dst_col, stat_series in cluster_stats.items():
+        df_fe[dst_col] = df_fe["pitch_cluster_name"].map(stat_series).astype("float32")
+
+    # Report coverage
+    n_mapped = df_fe["cluster_mean_velocity"].notna().sum() if "cluster_mean_velocity" in df_fe.columns else 0
+    print(f"  Cluster stats mapped to {n_mapped} rows ({n_mapped/len(df_fe)*100:.1f}%)")
+
+    # Clusters in val/test but not in train will have NaN - report these
+    if "cluster_mean_velocity" in df_fe.columns:
+        unseen_mask = ~train_mask & df_fe["pitch_cluster_name"].notna() & df_fe["cluster_mean_velocity"].isna()
+        n_unseen = unseen_mask.sum()
+        if n_unseen > 0:
+            print(f"  WARNING: {n_unseen} rows have clusters not seen in training")
+
+    del train_data, cluster_stats
+
+# %%
+# === TRAJECTORY / DECEPTION FEATURES ===
+# Features capturing "how late" movement happens and approach angles
+
+print("\n=== COMPUTING TRAJECTORY / DECEPTION FEATURES ===")
+
+# Time to plate (approximate, in seconds) from release
+# release_pos_y is typically ~55 ft, vy0 is negative (toward home plate)
+if "release_pos_y" in df_fe.columns and "vy0" in df_fe.columns:
+    df_fe["time_to_plate"] = (df_fe["release_pos_y"] / df_fe["vy0"].abs()).astype("float32")
+    print(f"  time_to_plate: computed for {df_fe['time_to_plate'].notna().sum()} rows")
+
+    # Late break intensity (movement per second) - higher = more deceptive
+    df_fe["late_break_z"] = (df_fe["pfx_z"] / df_fe["time_to_plate"]).astype("float32")
+    df_fe["late_break_x"] = (df_fe["pfx_x_norm"] / df_fe["time_to_plate"]).astype("float32")
+    print(f"  late_break_z/x: computed")
+
+# Approach angles (trajectory slope as seen by batter)
+if "release_pos_y" in df_fe.columns:
+    # Vertical approach angle - "flat" (high angle) vs "steep" (low angle)
+    df_fe["approach_angle_z"] = (
+        (df_fe["plate_z"] - df_fe["release_pos_z"]) / df_fe["release_pos_y"]
+    ).astype("float32")
+
+    # Horizontal approach angle (batter-relative)
+    df_fe["approach_angle_x"] = (
+        (df_fe["plate_x_batter"] - df_fe["release_pos_x_batter"]) / df_fe["release_pos_y"]
+    ).astype("float32")
+    print(f"  approach_angle_z/x: computed")
+
+# Acceleration magnitude (Magnus force intensity)
+if all(c in df_fe.columns for c in ["ax", "ay", "az"]):
+    df_fe["accel_magnitude"] = np.sqrt(
+        df_fe["ax"]**2 + df_fe["ay"]**2 + df_fe["az"]**2
+    ).astype("float32")
+    print(f"  accel_magnitude: computed for {df_fe['accel_magnitude'].notna().sum()} rows")
+
+# Deviation from cluster mean (how unusual is this pitch for its cluster?)
+if "cluster_mean_velocity" in df_fe.columns:
+    df_fe["velocity_vs_cluster"] = (
+        df_fe["effective_speed"] - df_fe["cluster_mean_velocity"]
+    ).astype("float32")
+    print(f"  velocity_vs_cluster: computed")
+
+if "cluster_mean_spin" in df_fe.columns:
+    df_fe["spin_vs_cluster"] = (
+        df_fe["release_spin_rate"] - df_fe["cluster_mean_spin"]
+    ).astype("float32")
+    print(f"  spin_vs_cluster: computed")
+
+if "cluster_mean_pfx_z" in df_fe.columns:
+    df_fe["pfx_z_vs_cluster"] = (
+        df_fe["pfx_z"] - df_fe["cluster_mean_pfx_z"]
+    ).astype("float32")
+    print(f"  pfx_z_vs_cluster: computed")
+
+# %%
 # ID columns (for downstream inference output)
 ID_COLS = [
     "game_pk",
@@ -203,7 +309,7 @@ TARGET_COLS = ["target_raw", "y_swing", "y_whiff"]
 SPLIT_COLS = ["split"]
 
 RAW_FEATURE_COLS = [
-    "game_date",
+    # "game_date" is already in ID_COLS, don't duplicate
     "effective_speed",
     "release_spin_rate",
     "pfx_z",
@@ -252,6 +358,24 @@ OPTIONAL_FINAL = [
     "ax", "ay", "az",
     "pitch_cluster_name",
     "pitch_type_mode",
+    # Cluster physical statistics (encoded from training data)
+    "cluster_mean_velocity",
+    "cluster_mean_eff_velocity",
+    "cluster_mean_spin",
+    "cluster_mean_pfx_x",
+    "cluster_mean_pfx_z",
+    "cluster_mean_extension",
+    # Trajectory / deception features
+    "time_to_plate",
+    "late_break_z",
+    "late_break_x",
+    "approach_angle_z",
+    "approach_angle_x",
+    "accel_magnitude",
+    # Deviation from cluster mean
+    "velocity_vs_cluster",
+    "spin_vs_cluster",
+    "pfx_z_vs_cluster",
 ]
 
 # Include ID columns for downstream use
@@ -265,7 +389,9 @@ FINAL_COLS = (
 )
 FINAL_COLS = [c for c in FINAL_COLS if c in df_fe.columns]
 
-df_fe_final = df_fe[FINAL_COLS].copy()
+# Select final columns (copy needed here to free memory from unused columns)
+df_fe_final = df_fe[FINAL_COLS]
+del df_fe  # Free memory from full dataframe
 
 print(f"\ndf_fe_final shape: {df_fe_final.shape}")
 print(f"Columns kept: {df_fe_final.columns.tolist()}")

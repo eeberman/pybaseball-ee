@@ -10,9 +10,8 @@ Output: data/processed/statcast_{START_DT}_{END_DT}_labeled.parquet
 
 from pathlib import Path
 import pandas as pd
-from pybaseball import statcast, cache
+from statcast_fetcher import fetch_statcast
 
-cache.enable()
 pd.set_option("display.max_columns", 200)
 pd.set_option("display.width", None)
 
@@ -28,6 +27,9 @@ RAW_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSED_DIR = Path("data/processed")
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
+CACHE_DIR = Path("data/cache")
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
 RAW_PATH = RAW_DIR / f"statcast_{START_DT}_{END_DT}.parquet"
 OUT_PATH = PROCESSED_DIR / f"statcast_{START_DT}_{END_DT}_labeled.parquet"
 
@@ -37,7 +39,8 @@ if RAW_PATH.exists():
     df_raw = pd.read_parquet(RAW_PATH)
     print("Loaded cached raw:", RAW_PATH, df_raw.shape)
 else:
-    df_raw = statcast(START_DT, END_DT).copy()
+    print(f"Fetching Statcast data from {START_DT} to {END_DT}...")
+    df_raw = fetch_statcast(START_DT, END_DT, cache_dir=CACHE_DIR, verbose=True)
     df_raw.to_parquet(RAW_PATH, index=False)
     print("Pulled + saved raw:", RAW_PATH, df_raw.shape)
 #%%
@@ -55,9 +58,7 @@ SWING_OUTCOMES = [
     "swinging_strike_blocked",
     "missed_bunt",
     "bunt_foul_tip",
-    "automatic_strike",
     "foul_bunt",
-    "automatic_ball"
 ]
 
 TAKE_OUTCOMES = [
@@ -65,15 +66,12 @@ TAKE_OUTCOMES = [
     "called_strike",
     "blocked_ball",
     "pitchout",
-    "automatic_ball"
 ]
 
 WHIFF_OUTCOMES = [
     "swinging_strike",
     "swinging_strike_blocked",
     "missed_bunt",
-    "automatic_strike",
-    "automatic_ball"
 ]
 
 CONTACT_OUTCOMES = [
@@ -81,11 +79,17 @@ CONTACT_OUTCOMES = [
     "foul",
     "foul_tip",
     "bunt_foul_tip",
-    "foul_bunt"
+    "foul_bunt",
 ]
 
-# HBP is dropped (neither swing nor take, not useful for modeling)
-HBP_OUTCOMES = ["hit_by_pitch"]
+# Dropped outcomes - not actual batter decisions, not useful for modeling
+# HBP: batter hit by pitch (neither swing nor take)
+# automatic_ball/strike: pitch clock violations, umpire-enforced (not batter action)
+DROP_OUTCOMES = [
+    "hit_by_pitch",
+    "automatic_ball",
+    "automatic_strike",
+]
 
 # %%
 # Create working copy
@@ -102,11 +106,13 @@ if date_nulls > 0:
     df = df.dropna(subset=["game_date"]).copy()
 
 # %%
-# Drop HBP rows - they're neither swings nor takes and excluded from modeling
-hbp_mask = df["description"].isin(HBP_OUTCOMES)
-hbp_count = hbp_mask.sum()
-print(f"Dropping {hbp_count} HBP rows ({hbp_count/len(df)*100:.2f}%)")
-df = df[~hbp_mask].copy()
+# Drop non-decision outcomes (HBP, automatic ball/strike)
+# These are not actual batter decisions and excluded from modeling
+drop_mask = df["description"].isin(DROP_OUTCOMES)
+drop_count = drop_mask.sum()
+print(f"Dropping {drop_count} non-decision outcomes ({drop_count/len(df)*100:.2f}%)")
+print(f"  Breakdown: {df[drop_mask]['description'].value_counts().to_dict()}")
+df = df[~drop_mask].copy()
 
 # %%
 # Create target columns
@@ -216,8 +222,8 @@ print("\n=== FINAL VALIDATION SUMMARY ===")
 print(f"Input rows: {input_rows}")
 print(f"Output rows: {len(df)} ({len(df)/input_rows*100:.1f}% retained)")
 
-# Check description values not in known outcomes
-known_outcomes = set(SWING_OUTCOMES + TAKE_OUTCOMES + HBP_OUTCOMES)
+# Check description values not in known outcomes (after dropping non-decisions)
+known_outcomes = set(SWING_OUTCOMES + TAKE_OUTCOMES)
 unknown_desc = df[~df["description"].isin(known_outcomes)]["description"].unique()
 if len(unknown_desc) > 0:
     print(f"\nWARNING: {len(unknown_desc)} unknown description values:")

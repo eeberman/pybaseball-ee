@@ -1,0 +1,113 @@
+{
+  "last_updated": "2026-02-15",
+  "season": "2024",
+  "methodology": "skill_delta = playoff_skill - regular_season_skill (using RS model for both)",
+  "min_rs_pitches": 250,
+  "min_po_pitches": 50,
+  "pitchers": [
+    {
+      "pitcher_id": 666142,
+      "name": "Cole Ragans",
+      "team": "KC",
+      "rs_pitches": 3112,
+      "rs_skill": 0.0058,
+      "po_pitches": 80,
+      "po_skill": -0.0629,
+      "skill_delta": -0.0687,
+      "category": "big_faller",
+      "confidence": "low",
+      "rank": 1
+    },
+    {
+      "pitcher_id": 622663,
+      "name": "Luis Severino",
+      "team": "NYM",
+      "rs_pitches": 2877,
+      "rs_skill": -0.0172,
+      "po_pitches": 104,
+      "po_skill": -0.0788,
+      "skill_delta": -0.0616,
+      "category": "big_faller",
+      "confidence": "medium",
+      "rank": 2
+    },
+    {
+      "pitcher_id": 669203,
+      "name": "Corbin Burnes",
+      "team": "BAL",
+      "rs_pitches": 2991,
+      "rs_skill": -0.0008,
+      "po_pitches": 84,
+      "po_skill": -0.06,
+      "skill_delta": -0.0592,
+      "category": "big_faller",
+      "confidence": "low",
+      "rank": 3
+    },
+    {
+      "pitcher_id": 669373,
+      "name": "Tarik Skubal",
+      "team": "DET",
+      "rs_pitches": 2796,
+      "rs_skill": 0.0368,
+      "po_pitches": 88,
+      "po_skill": -0.0073,
+      "skill_delta": -0.0441,
+      "category": "faller",
+      "confidence": "low",
+      "rank": 4
+    },
+    {
+      "pitcher_id": 642547,
+      "name": "Freddy Peralta",
+      "team": "MIL",
+      "rs_pitches": 3031,
+      "rs_skill": -0.0007,
+      "po_pitches": 68,
+      "po_skill": -0.0399,
+      "skill_delta": -0.0392,
+      "category": "faller",
+      "confidence": "low",
+      "rank": 5
+    },
+    {
+      "pitcher_id": 669854,
+      "name": "Ronel Blanco",
+      "team": "HOU",
+      "rs_pitches": 2739,
+      "rs_skill": 0.0101,
+      "po_pitches": 50,
+      "po_skill": 0.0351,
+      "skill_delta": 0.025,
+      "category": "riser",
+      "confidence": "low",
+      "rank": 6
+    },
+    {
+      "pitcher_id": 650633,
+      "name": "Michael King",
+      "team": "SD",
+      "rs_pitches": 2858,
+      "rs_skill": 0.0217,
+      "po_pitches": 89,
+      "po_skill": 0.0089,
+      "skill_delta": -0.0128,
+      "category": "neutral",
+      "confidence": "low",
+      "rank": 7
+    },
+    {
+      "pitcher_id": 664285,
+      "name": "Framber Valdez",
+      "team": "HOU",
+      "rs_pitches": 2489,
+      "rs_skill": -0.0105,
+      "po_pitches": 78,
+      "po_skill": -0.0105,
+      "skill_delta": 0.0,
+      "category": "neutral",
+      "confidence": "low",
+      "rank": 8
+    }
+  ]
+}

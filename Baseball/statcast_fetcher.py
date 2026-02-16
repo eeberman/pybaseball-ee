@@ -55,6 +55,7 @@ def fetch_statcast(
     cache_dir: Path | str | None = None,
     verbose: bool = True,
     timeout: int = 120,
+    game_types: str = "",
 ) -> pd.DataFrame:
     """
     Fetch Statcast data directly from Baseball Savant.
@@ -69,6 +70,10 @@ def fetch_statcast(
         cache_dir: Optional directory to cache chunks as parquet files
         verbose: Print progress messages
         timeout: Request timeout in seconds
+        game_types: Baseball Savant hfGT filter string. Examples:
+            "" = all game types (regular season + playoffs)
+            "R|" = regular season only
+            "F|D|L|W|" = playoffs only (Wild Card, Division, LCS, World Series)
 
     Returns:
         DataFrame with all Statcast data for the date range
@@ -124,7 +129,7 @@ def fetch_statcast(
             "all": "true",
             "hfPT": "",
             "hfAB": "",
-            "hfGT": "R|",  # Regular season
+            "hfGT": game_types,
             "hfPR": "",
             "hfZ": "",
             "hfStadium": "",

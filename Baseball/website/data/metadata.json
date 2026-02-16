@@ -1,0 +1,18 @@
+{
+  "last_updated": "2026-02-16T08:04:37.103110",
+  "seasons_included": [
+    "2024"
+  ],
+  "total_pitchers_rs": 592,
+  "total_pitches_rs": 676703,
+  "total_swings_rs": 325779,
+  "model_version": "v1.0",
+  "model_trained_on": "regular_season_only",
+  "thresholds": {
+    "rs_min_pitches": 250,
+    "pitch_type_min": 20,
+    "zone_min": 10
+  },
+  "data_source": "Baseball Savant (Statcast)",
+  "methodology": "Whiff skill = actual_whiff_rate - expected_whiff_rate. Expected rate from XGBoost Model 2 with isotonic calibration. Positive skill = pitcher generates more whiffs than expected."
+}

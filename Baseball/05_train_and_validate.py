@@ -84,6 +84,20 @@ TARGET_COLS = ["target_raw", "y_swing", "y_whiff"]
 SPLIT_COLS = ["split"]
 EXCLUDE_COLS = ID_COLS + TARGET_COLS + SPLIT_COLS
 
+# Features to exclude for pitch-only model (no player fingerprinting)
+# These features are derived from pitcher-specific clusters and leak pitcher identity
+CLUSTER_FEATURES_TO_REMOVE = [
+    "cluster_mean_velocity",
+    "cluster_mean_eff_velocity",
+    "cluster_mean_spin",
+    "cluster_mean_pfx_x",
+    "cluster_mean_pfx_z",
+    "cluster_mean_extension",
+    "velocity_vs_cluster",
+    "spin_vs_cluster",
+    "pfx_z_vs_cluster",
+]
+
 # Categorical columns that need special handling
 # NOTE: pitch_cluster_name excluded - too high cardinality (3700+ unique values)
 #       It's pitcher-specific and would cause memory issues with one-hot encoding
@@ -103,6 +117,15 @@ for c in FEATURE_COLS:
         CAT_FEATURE_COLS.append(c)
     elif df_step1[c].dtype in ["float64", "float32", "int64", "int32", "int8", "Int8"]:
         NUMERIC_FEATURE_COLS.append(c)
+
+# Remove cluster-derived features for pitch-only model
+num_before = len(NUMERIC_FEATURE_COLS)
+NUMERIC_FEATURE_COLS = [c for c in NUMERIC_FEATURE_COLS if c not in CLUSTER_FEATURES_TO_REMOVE]
+num_removed = num_before - len(NUMERIC_FEATURE_COLS)
+print(f"\nRemoved {num_removed} cluster-derived features for pitch-only model:")
+for f in CLUSTER_FEATURES_TO_REMOVE:
+    status = "[removed]" if f not in NUMERIC_FEATURE_COLS else "[not found]"
+    print(f"  - {f}: {status}")
 
 print(f"\nNumeric features ({len(NUMERIC_FEATURE_COLS)}): {NUMERIC_FEATURE_COLS[:10]}...")
 print(f"Categorical features ({len(CAT_FEATURE_COLS)}): {CAT_FEATURE_COLS}")
@@ -203,10 +226,20 @@ dval2 = xgb.DMatrix(X_val2, label=y_val2, feature_names=X_train2.columns.tolist(
 dtest2 = xgb.DMatrix(X_test2, label=y_test2, feature_names=X_train2.columns.tolist())
 
 # %%
-# XGBoost parameters
+# Custom Brier score metric for XGBoost (calibration-focused)
+def brier_score_metric(preds: np.ndarray, dtrain: xgb.DMatrix) -> tuple[str, float]:
+    """Custom Brier score metric for XGBoost - lower is better."""
+    labels = dtrain.get_label()
+    brier = np.mean((preds - labels) ** 2)
+    return "brier", brier
+
+
+# %%
+# XGBoost parameters - optimizing for calibration (logloss) not ranking (AUC)
+# Logloss is a proper scoring rule that encourages well-calibrated probabilities
 params1 = {
     "objective": "binary:logistic",
-    "eval_metric": ["logloss", "auc"],
+    "eval_metric": "logloss",  # Single metric for early stopping (calibration-focused)
     "max_depth": 6,
     "eta": 0.1,
     "subsample": 0.8,
@@ -219,7 +252,7 @@ params1 = {
 # Reduced depth and added regularization to combat overfitting
 params2 = {
     "objective": "binary:logistic",
-    "eval_metric": ["logloss", "auc"],
+    "eval_metric": "logloss",  # Single metric for early stopping (calibration-focused)
     "max_depth": 4,           # Reduced from 6 for better generalization
     "eta": 0.1,
     "subsample": 0.7,         # Reduced from 0.8
@@ -233,6 +266,7 @@ params2 = {
 # %%
 # Train Model 1 (swing/take)
 print("\n=== TRAINING MODEL 1 (SWING/TAKE) ===")
+print("Optimizing for calibration (logloss + Brier score)")
 
 evals1 = [(dtrain1, "train"), (dval1, "val")]
 evals_result1 = {}
@@ -245,14 +279,17 @@ model1 = xgb.train(
     evals_result=evals_result1,
     early_stopping_rounds=50,
     verbose_eval=50,
+    custom_metric=brier_score_metric,
 )
 
 print(f"Best iteration: {model1.best_iteration}")
-print(f"Best val AUC: {evals_result1['val']['auc'][model1.best_iteration]:.4f}")
+print(f"Best val logloss: {evals_result1['val']['logloss'][model1.best_iteration]:.4f}")
+print(f"Best val Brier: {evals_result1['val']['brier'][model1.best_iteration]:.4f}")
 
 # %%
 # Train Model 2 (whiff/contact)
 print("\n=== TRAINING MODEL 2 (WHIFF/CONTACT) ===")
+print("Optimizing for calibration (logloss + Brier score)")
 
 evals2 = [(dtrain2, "train"), (dval2, "val")]
 evals_result2 = {}
@@ -265,10 +302,12 @@ model2 = xgb.train(
     evals_result=evals_result2,
     early_stopping_rounds=50,
     verbose_eval=50,
+    custom_metric=brier_score_metric,
 )
 
 print(f"Best iteration: {model2.best_iteration}")
-print(f"Best val AUC: {evals_result2['val']['auc'][model2.best_iteration]:.4f}")
+print(f"Best val logloss: {evals_result2['val']['logloss'][model2.best_iteration]:.4f}")
+print(f"Best val Brier: {evals_result2['val']['brier'][model2.best_iteration]:.4f}")
 
 # %%
 # === EVALUATE MODEL 1 INDEPENDENTLY ===

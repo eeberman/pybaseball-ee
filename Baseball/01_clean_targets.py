@@ -16,10 +16,80 @@ pd.set_option("display.max_columns", 200)
 pd.set_option("display.width", None)
 
 # %%
-# Configuration: date range for data pull
-# For cross-year validation: pull 2023-04-01 to 2024-10-01
+# =============================================
+# CONFIGURATION - Modify these for different date ranges
+# =============================================
+
+# Date range to pull from Statcast
 START_DT = "2023-04-01"
-END_DT = "2024-10-01"
+END_DT = "2024-11-05"
+
+# Split boundaries (must be in chronological order)
+# - Train: START_DT to TRAIN_END (exclusive)
+# - Val: TRAIN_END to VAL_END (exclusive)
+# - Test: VAL_END to END_DT
+TRAIN_END = "2023-09-01"  # First day of validation
+VAL_END = "2024-01-01"    # First day of test
+
+# =============================================
+
+
+# =============================================
+# CONFIGURATION VALIDATION - Prevents accidental leakage
+# =============================================
+
+def validate_split_config():
+    """Validate split configuration to prevent data leakage."""
+    errors = []
+
+    # Parse dates
+    start = pd.to_datetime(START_DT)
+    end = pd.to_datetime(END_DT)
+    train_end = pd.to_datetime(TRAIN_END)
+    val_end = pd.to_datetime(VAL_END)
+
+    # Check chronological order
+    if not (start < train_end < val_end <= end):
+        errors.append(
+            f"Dates must be chronological: START_DT ({START_DT}) < TRAIN_END ({TRAIN_END}) "
+            f"< VAL_END ({VAL_END}) <= END_DT ({END_DT})"
+        )
+
+    # Check reasonable split sizes (warn if any period < 30 days)
+    train_days = (train_end - start).days
+    val_days = (val_end - train_end).days
+    test_days = (end - val_end).days
+
+    if train_days < 30:
+        errors.append(f"Train period too short: {train_days} days (< 30)")
+    if val_days < 14:
+        errors.append(f"Validation period too short: {val_days} days (< 14)")
+    if test_days < 30:
+        errors.append(f"Test period too short: {test_days} days (< 30)")
+
+    if errors:
+        print("=" * 60)
+        print("CONFIGURATION ERROR - Fix before proceeding:")
+        print("=" * 60)
+        for e in errors:
+            print(f"  - {e}")
+        raise ValueError("Invalid split configuration. See errors above.")
+
+    # Print config summary
+    print("=" * 60)
+    print("SPLIT CONFIGURATION")
+    print("=" * 60)
+    print(f"  Data range: {START_DT} to {END_DT}")
+    print(f"  Train: {START_DT} to {TRAIN_END} ({train_days} days)")
+    print(f"  Val:   {TRAIN_END} to {VAL_END} ({val_days} days)")
+    print(f"  Test:  {VAL_END} to {END_DT} ({test_days} days)")
+    print("=" * 60)
+
+
+# Run validation immediately
+validate_split_config()
+
+# =============================================
 
 RAW_DIR = Path("data/raw")
 RAW_DIR.mkdir(parents=True, exist_ok=True)
@@ -39,10 +109,46 @@ if RAW_PATH.exists():
     df_raw = pd.read_parquet(RAW_PATH)
     print("Loaded cached raw:", RAW_PATH, df_raw.shape)
 else:
-    print(f"Fetching Statcast data from {START_DT} to {END_DT}...")
-    df_raw = fetch_statcast(START_DT, END_DT, cache_dir=CACHE_DIR, verbose=True)
-    df_raw.to_parquet(RAW_PATH, index=False)
-    print("Pulled + saved raw:", RAW_PATH, df_raw.shape)
+    # Check if an older raw file exists that we can extend instead of re-fetching everything
+    OLD_RAW_PATH = RAW_DIR / "statcast_2023-04-01_2024-10-01.parquet"
+    if OLD_RAW_PATH.exists():
+        print(f"Found older raw file: {OLD_RAW_PATH}")
+        print(f"Loading existing data and fetching additional range 2024-10-01 to {END_DT}...")
+        df_old = pd.read_parquet(OLD_RAW_PATH)
+        print(f"  Old raw: {df_old.shape}")
+
+        # Fetch the additional date range (all game types to capture playoffs)
+        df_new = fetch_statcast("2024-10-01", END_DT, cache_dir=CACHE_DIR, verbose=True)
+        print(f"  New fetch: {df_new.shape}")
+
+        # Align dtypes: old parquet may have typed columns (e.g. date) while
+        # freshly fetched CSV has strings.  Convert shared columns in df_new to
+        # match df_old dtypes where possible.
+        for col in df_new.columns:
+            if col in df_old.columns and df_old[col].dtype != df_new[col].dtype:
+                try:
+                    df_new[col] = df_new[col].astype(df_old[col].dtype)
+                except (ValueError, TypeError):
+                    # If conversion fails, cast both to object so concat works
+                    df_old[col] = df_old[col].astype(object)
+                    df_new[col] = df_new[col].astype(object)
+
+        # Combine and deduplicate
+        df_raw = pd.concat([df_old, df_new], ignore_index=True)
+        if "game_pk" in df_raw.columns and "at_bat_number" in df_raw.columns and "pitch_number" in df_raw.columns:
+            before = len(df_raw)
+            df_raw = df_raw.drop_duplicates(subset=["game_pk", "at_bat_number", "pitch_number"])
+            after = len(df_raw)
+            if before != after:
+                print(f"  Removed {before - after:,} duplicates")
+        df_raw.to_parquet(RAW_PATH, index=False)
+        print(f"Saved combined raw: {RAW_PATH}, {df_raw.shape}")
+        del df_old, df_new
+    else:
+        print(f"Fetching Statcast data from {START_DT} to {END_DT}...")
+        df_raw = fetch_statcast(START_DT, END_DT, cache_dir=CACHE_DIR, verbose=True)
+        df_raw.to_parquet(RAW_PATH, index=False)
+        print("Pulled + saved raw:", RAW_PATH, df_raw.shape)
 #%%
 unque_descriptions = df_raw['description'].unique()
 print("Unique description values in raw data:", len(unque_descriptions))
@@ -104,6 +210,21 @@ date_nulls = df["game_date"].isna().sum()
 if date_nulls > 0:
     print(f"WARNING: {date_nulls} rows with null game_date will be dropped")
     df = df.dropna(subset=["game_date"]).copy()
+
+# %%
+# Filter to regular season only (exclude playoffs)
+# game_type: 'R' = Regular, 'F' = Wild Card, 'D' = Division, 'L' = LCS, 'W' = World Series
+if "game_type" in df.columns:
+    playoff_mask = df["game_type"] != "R"
+    playoff_count = playoff_mask.sum()
+    if playoff_count > 0:
+        print(f"Removing {playoff_count} playoff rows ({playoff_count/len(df)*100:.2f}%)")
+        print(f"  Breakdown: {df[playoff_mask]['game_type'].value_counts().to_dict()}")
+        df = df[~playoff_mask].copy()
+    else:
+        print("No playoff games found in data")
+else:
+    print("WARNING: game_type column not found, cannot filter playoffs")
 
 # %%
 # Drop non-decision outcomes (HBP, automatic ball/strike)
@@ -170,13 +291,13 @@ print("  PASS: y_whiff is null for all non-swings")
 
 # %%
 # Temporal split assignment
-# 2023 Apr-Aug = train, 2023 Sep-Oct = val, 2024+ = test
+# Uses config: TRAIN_END and VAL_END boundaries
 print("\n=== TEMPORAL SPLIT ASSIGNMENT ===")
 
-df["split"] = "test"  # default for 2024+
-df.loc[df["game_date"] < "2023-09-01", "split"] = "train"
+df["split"] = "test"  # default
+df.loc[df["game_date"] < TRAIN_END, "split"] = "train"
 df.loc[
-    (df["game_date"] >= "2023-09-01") & (df["game_date"] < "2024-01-01"),
+    (df["game_date"] >= TRAIN_END) & (df["game_date"] < VAL_END),
     "split"
 ] = "val"
 
@@ -199,17 +320,20 @@ for split_name in ["train", "val", "test"]:
     else:
         print(f"  {split_name}: NO DATA")
 
-# Verify no date leakage
-train_max = df[df["split"] == "train"]["game_date"].max()
-val_min = df[df["split"] == "val"]["game_date"].min()
-val_max = df[df["split"] == "val"]["game_date"].max()
-test_min = df[df["split"] == "test"]["game_date"].min()
+# Verify no date leakage (post-assignment check)
+train_dates = df[df["split"] == "train"]["game_date"]
+val_dates = df[df["split"] == "val"]["game_date"]
+test_dates = df[df["split"] == "test"]["game_date"]
 
-if pd.notna(train_max) and pd.notna(val_min):
-    assert train_max < val_min, f"Date leakage: train max {train_max} >= val min {val_min}"
-if pd.notna(val_max) and pd.notna(test_min):
-    assert val_max < test_min, f"Date leakage: val max {val_max} >= test min {test_min}"
-print("\nDATE LEAKAGE CHECK: PASS")
+if len(train_dates) > 0 and len(val_dates) > 0:
+    assert train_dates.max() < val_dates.min(), \
+        f"LEAKAGE: Train max ({train_dates.max()}) >= Val min ({val_dates.min()})"
+
+if len(val_dates) > 0 and len(test_dates) > 0:
+    assert val_dates.max() < test_dates.min(), \
+        f"LEAKAGE: Val max ({val_dates.max()}) >= Test min ({test_dates.min()})"
+
+print("\nLEAKAGE CHECK: PASS - No temporal overlap between splits")
 
 # Assert splits are non-empty (warn if any missing)
 for split_name in ["train", "val", "test"]:

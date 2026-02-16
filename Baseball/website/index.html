@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pitcher Whiff Skill - 2024 MLB Leaderboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Pitcher Whiff Skill</h1>
+    <nav>
+      <a href="index.html" class="active">Leaderboard</a>
+      <a href="playoffs.html">Playoffs</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-title">
+    <h2>2024 Regular Season Leaderboard</h2>
+    <p>Whiff skill = actual whiff rate - expected whiff rate. Positive = pitcher generates more whiffs than expected by the model.</p>
+  </div>
+
+  <div class="filters">
+    <input type="text" id="search" placeholder="Search pitcher name...">
+    <select id="team-filter">
+      <option value="">All Teams</option>
+    </select>
+    <label style="font-size:0.85rem;color:var(--text-muted);">
+      Min pitches:
+      <input type="number" id="min-pitches" value="250" min="0" step="50" style="width:80px;">
+    </label>
+    <span id="result-count" style="font-size:0.85rem;color:var(--text-muted);"></span>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="leaderboard">
+      <thead>
+        <tr>
+          <th data-col="rank">#<span class="sort-indicator"></span></th>
+          <th data-col="name">Pitcher<span class="sort-indicator"></span></th>
+          <th data-col="team">Team<span class="sort-indicator"></span></th>
+          <th data-col="n_pitches" class="num">Pitches<span class="sort-indicator"></span></th>
+          <th data-col="n_swings" class="num">Swings<span class="sort-indicator"></span></th>
+          <th data-col="actual_whiff_rate" class="num">Whiff%<span class="sort-indicator"></span></th>
+          <th data-col="expected_whiff_rate" class="num">xWhiff%<span class="sort-indicator"></span></th>
+          <th data-col="whiff_skill" class="num">Skill<span class="sort-indicator"></span></th>
+          <th data-col="percentile" class="num">Pctl<span class="sort-indicator"></span></th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-muted);">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Model trained on 2023 regular season. Expected rates from XGBoost with isotonic calibration.
+    Data source: Baseball Savant (Statcast).
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

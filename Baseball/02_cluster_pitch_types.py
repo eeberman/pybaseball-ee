@@ -15,6 +15,7 @@ from pathlib import Path
 import json
 import numpy as np
 import pandas as pd
+from joblib import Parallel, delayed
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.mixture import GaussianMixture
@@ -92,15 +93,18 @@ if len(cluster_cols) < 4:
     raise ValueError(f"Too few clustering columns found ({len(cluster_cols)}). Found: {cluster_cols}")
 
 # %%
-# Clean: keep only rows with enough data to cluster
-dfc = df.copy()
+# Clean: keep only rows with enough data to cluster (memory-optimized)
+# Convert cluster columns to numeric in-place on df
 for c in cluster_cols:
-    dfc[c] = pd.to_numeric(dfc[c], errors="coerce")
+    df[c] = pd.to_numeric(df[c], errors="coerce")
 
 need = ["pitcher"] + cluster_cols
-rows_before_null_drop = len(dfc)
-dfc = dfc.dropna(subset=need).copy()
-print(f"After dropping clustering nulls: {len(dfc)} ({len(dfc)/rows_before_null_drop*100:.1f}% retained)")
+rows_before_null_drop = len(df)
+
+# Create mask for valid rows instead of copying
+valid_mask = df[need].notna().all(axis=1)
+valid_indices = df.index[valid_mask].to_numpy()
+print(f"Valid rows for clustering: {len(valid_indices)} ({len(valid_indices)/rows_before_null_drop*100:.1f}% retained)")
 
 # %%
 # Pitcher-specific clustering via GMM with BIC-based k selection
@@ -110,27 +114,18 @@ print(f"After dropping clustering nulls: {len(dfc)} ({len(dfc)/rows_before_null_
 KMIN = 2
 KMAX = 6
 MIN_PITCHES_PER_PITCHER = 200
+N_JOBS = 4  # Use 4 cores to balance speed vs memory (each worker gets copy of data)
 
-pitch_cluster_id = np.full(len(dfc), fill_value=-1, dtype=np.int32)
-pitch_cluster_name = np.full(len(dfc), fill_value="", dtype=object)
 
-records = []
-scaler = StandardScaler()
-
-# group indices once
-groups = dfc.groupby("pitcher").indices
-
-print(f"\nClustering {len(groups)} pitchers...")
-pitchers_clustered = 0
-pitchers_skipped = 0
-
-for pitcher_id, idx in groups.items():
+def cluster_pitcher(pitcher_id, idx, X_data, pitch_types=None):
+    """Cluster a single pitcher's pitches using GMM with BIC selection."""
     idx = np.array(idx, dtype=int)
-    if len(idx) < MIN_PITCHES_PER_PITCHER:
-        pitchers_skipped += 1
-        continue
 
-    X = dfc.iloc[idx][cluster_cols].to_numpy(dtype=np.float64)
+    if len(idx) < MIN_PITCHES_PER_PITCHER:
+        return None  # Skip this pitcher
+
+    X = X_data[idx]
+    scaler = StandardScaler()
     Xs = scaler.fit_transform(X)
 
     best_k = None
@@ -153,10 +148,7 @@ for pitcher_id, idx in groups.items():
             best_model = gmm
 
     labels = best_model.predict(Xs).astype(int)
-
-    # assign global arrays
-    pitch_cluster_id[idx] = labels
-    pitch_cluster_name[idx] = [f"P{int(pitcher_id)}_C{int(l)}" for l in labels]
+    cluster_names = [f"P{int(pitcher_id)}_C{int(l)}" for l in labels]
 
     rec = {
         "pitcher": int(pitcher_id),
@@ -165,47 +157,102 @@ for pitcher_id, idx in groups.items():
         "bic": float(best_bic),
     }
 
-    # optional validation vs pitch_type within pitcher
-    if has_pitch_type:
-        pt = dfc.iloc[idx]["pitch_type"].astype("string").fillna("NA").to_numpy()
+    # Optional validation vs pitch_type within pitcher
+    if pitch_types is not None:
+        pt = pitch_types[idx]
         ari = adjusted_rand_score(pt, labels)
         nmi = normalized_mutual_info_score(pt, labels)
         rec["ari_vs_pitch_type"] = float(ari)
         rec["nmi_vs_pitch_type"] = float(nmi)
 
-    records.append(rec)
-    pitchers_clustered += 1
+    return {
+        "idx": idx,
+        "labels": labels,
+        "cluster_names": cluster_names,
+        "record": rec,
+    }
 
-print(f"Clustered pitchers: {len(records)}")
+
+# Prepare data for parallel processing (memory-optimized)
+# Extract only the data we need as numpy arrays
+X_data = df.loc[valid_indices, cluster_cols].to_numpy(dtype=np.float32)  # float32 saves 50% memory
+pitcher_ids = df.loc[valid_indices, "pitcher"].to_numpy()
+pitch_types = None
+if has_pitch_type:
+    pitch_types = df.loc[valid_indices, "pitch_type"].astype("string").fillna("NA").to_numpy()
+
+# Build pitcher -> local indices mapping (indices into X_data, not df)
+from collections import defaultdict
+pitcher_to_local_idx = defaultdict(list)
+for local_idx, pid in enumerate(pitcher_ids):
+    pitcher_to_local_idx[pid].append(local_idx)
+groups = {pid: np.array(idxs, dtype=int) for pid, idxs in pitcher_to_local_idx.items()}
+del pitcher_to_local_idx  # free memory
+
+print(f"\nClustering {len(groups)} pitchers using {N_JOBS} CPU cores...")
+print("(N_JOBS=-1 means all available cores)")
+
+# Run clustering in parallel
+results = Parallel(n_jobs=N_JOBS, verbose=10)(
+    delayed(cluster_pitcher)(pitcher_id, idx, X_data, pitch_types)
+    for pitcher_id, idx in groups.items()
+)
+
+# Aggregate results (memory-optimized: write directly to df)
+# Initialize columns with NaN
+df["pitch_cluster_id"] = np.nan
+df["pitch_cluster_name"] = None
+
+# Arrays to hold results for valid rows
+local_cluster_id = np.full(len(valid_indices), fill_value=-1, dtype=np.int32)
+local_cluster_name = np.full(len(valid_indices), fill_value="", dtype=object)
+
+records = []
+pitchers_clustered = 0
+pitchers_skipped = 0
+
+for res in results:
+    if res is None:
+        pitchers_skipped += 1
+    else:
+        local_cluster_id[res["idx"]] = res["labels"]
+        local_cluster_name[res["idx"]] = res["cluster_names"]
+        records.append(res["record"])
+        pitchers_clustered += 1
+
+# Write results back to df at valid_indices positions
+df.loc[valid_indices, "pitch_cluster_id"] = local_cluster_id
+df.loc[valid_indices, "pitch_cluster_name"] = local_cluster_name
+df.loc[df["pitch_cluster_id"] < 0, ["pitch_cluster_id", "pitch_cluster_name"]] = [np.nan, None]
+
+# Free memory
+del local_cluster_id, local_cluster_name, X_data, pitcher_ids
+if pitch_types is not None:
+    del pitch_types
+
+print(f"Clustered pitchers: {pitchers_clustered}")
 print(f"Skipped pitchers (<{MIN_PITCHES_PER_PITCHER} pitches): {pitchers_skipped}")
 
 # %%
-dfc["pitch_cluster_id"] = pitch_cluster_id
-dfc["pitch_cluster_name"] = pitch_cluster_name
-dfc.loc[dfc["pitch_cluster_id"] < 0, ["pitch_cluster_id", "pitch_cluster_name"]] = [np.nan, np.nan]
-
 # For interpretability: mode pitch_type per cluster (if available)
 if has_pitch_type:
-    tmp = dfc.dropna(subset=["pitch_cluster_name"]).copy()
-    tmp["pitch_type"] = tmp["pitch_type"].astype("string")
+    # Compute mode without creating copies - use df directly
+    clustered_mask = df["pitch_cluster_name"].notna()
     mode_map = (
-        tmp.groupby(["pitcher", "pitch_cluster_name"])["pitch_type"]
+        df.loc[clustered_mask, ["pitcher", "pitch_cluster_name", "pitch_type"]]
+        .assign(pitch_type=lambda x: x["pitch_type"].astype("string"))
+        .groupby(["pitcher", "pitch_cluster_name"])["pitch_type"]
         .agg(lambda s: s.value_counts().index[0] if len(s) else "NA")
         .reset_index()
         .rename(columns={"pitch_type": "pitch_type_mode"})
     )
-    dfc = dfc.merge(mode_map, on=["pitcher", "pitch_cluster_name"], how="left")
+    df = df.merge(mode_map, on=["pitcher", "pitch_cluster_name"], how="left")
+    del mode_map
 else:
-    dfc["pitch_type_mode"] = np.nan
+    df["pitch_type_mode"] = np.nan
 
-# %%
-# Merge cluster labels back to the full df (rows without cluster features get NaN cluster)
-df_out = df.copy()
-df_out = df_out.merge(
-    dfc[["game_date", "pitcher", "at_bat_number", "pitch_number", "pitch_cluster_id", "pitch_cluster_name", "pitch_type_mode"]],
-    on=["game_date", "pitcher", "at_bat_number", "pitch_number"],
-    how="left",
-)
+# df is now our output (no separate df_out needed)
+df_out = df
 
 # %%
 # === OUTPUT VALIDATION ===

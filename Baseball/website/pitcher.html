@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pitcher Detail - Whiff Skill</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Pitcher Whiff Skill</h1>
+    <nav>
+      <a href="index.html">Leaderboard</a>
+      <a href="playoffs.html">Playoffs</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div id="pitcher-content">
+    <p style="color:var(--text-muted);padding:2rem 0;">Loading pitcher data...</p>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Model trained on 2023 regular season. Expected rates from XGBoost with isotonic calibration.
+    Data source: Baseball Savant (Statcast).
+  </div>
+</footer>
+
+<script src="pitcher.js"></script>
+</body>
+</html>

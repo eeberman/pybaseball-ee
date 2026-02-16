@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playoff Performance - Pitcher Whiff Skill</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Pitcher Whiff Skill</h1>
+    <nav>
+      <a href="index.html">Leaderboard</a>
+      <a href="playoffs.html" class="active">Playoffs</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <!-- Playoff Leaderboard -->
+  <div class="page-title">
+    <h2>2024 Playoff Whiff Skill</h2>
+    <p>Regular season model applied to playoff pitches. Skill = actual whiff rate - expected whiff rate.</p>
+  </div>
+
+  <div class="table-wrapper">
+    <table id="po-leaderboard">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Pitcher</th>
+          <th>Team</th>
+          <th class="num">PO Pitches</th>
+          <th class="num">PO Swings</th>
+          <th class="num">Whiff%</th>
+          <th class="num">xWhiff%</th>
+          <th class="num">PO Skill</th>
+          <th class="num">Confidence</th>
+        </tr>
+      </thead>
+      <tbody id="po-table-body">
+        <tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-muted);">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Risers/Fallers Chart -->
+  <div class="chart-section" style="margin-top:2rem;">
+    <h3>Playoff Risers &amp; Fallers</h3>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:1rem;">
+      skill_delta = playoff skill - regular season skill. Requires 250+ RS pitches and 50+ PO pitches.
+    </p>
+    <div class="chart-container" id="comparison-chart-container">
+      <canvas id="comparison-chart"></canvas>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    Model trained on 2023 regular season. Applied to both RS and PO data to detect performance changes.
+    Data source: Baseball Savant (Statcast).
+  </div>
+</footer>
+
+<script src="playoffs.js"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-02-16T08:04:37.103110",
+  "last_updated": "2026-02-16T19:19:29.626332",
   "seasons_included": [
     "2024"
   ],
@@ -11,8 +11,12 @@
   "thresholds": {
     "rs_min_pitches": 250,
     "pitch_type_min": 20,
-    "zone_min": 10
+    "zone_min": 10,
+    "po_min_pitches": 50
   },
   "data_source": "Baseball Savant (Statcast)",
-  "methodology": "Whiff skill = actual_whiff_rate - expected_whiff_rate. Expected rate from XGBoost Model 2 with isotonic calibration. Positive skill = pitcher generates more whiffs than expected."
+  "methodology": "Whiff skill = actual_whiff_rate - expected_whiff_rate. Expected rate from XGBoost Model 2 with isotonic calibration. Positive skill = pitcher generates more whiffs than expected.",
+  "total_pitchers_po": 84,
+  "total_pitchers_comparison": 77,
+  "total_pitches_po": 12741
 }

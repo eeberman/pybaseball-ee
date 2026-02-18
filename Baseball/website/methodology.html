@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology - Pitcher Whiff Skill</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Pitcher Whiff Skill</h1>
+    <nav>
+      <a href="index.html">Leaderboard</a>
+      <a href="playoffs.html">Playoffs</a>
+      <a href="methodology.html" class="active">Methodology</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-title">
+    <h2>Methodology &amp; model details</h2>
+    <p>How whiff skill is calculated and what data is included.</p>
+  </div>
+
+  <section class="methodology-card">
+    <h3>Metric definition</h3>
+    <p>Whiff skill = actual whiff rate - expected whiff rate. Positive values indicate a pitcher generated more whiffs than expected given pitch context.</p>
+  </section>
+
+  <section class="methodology-card">
+    <h3>Modeling approach</h3>
+    <ul>
+      <li>Expected whiff rates are generated using an XGBoost model with isotonic calibration.</li>
+      <li>The model is trained on regular-season data and then applied to regular-season and postseason samples for comparison.</li>
+      <li>Confidence/qualification thresholds are based on minimum pitch counts shown in the metadata file.</li>
+    </ul>
+  </section>
+
+  <section class="methodology-card">
+    <h3>Data source</h3>
+    <p>Baseball Savant (Statcast).</p>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <a href="methodology.html">Methodology &amp; model details</a>
+  </div>
+</footer>
+
+</body>
+</html>

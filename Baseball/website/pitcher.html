@@ -15,11 +15,19 @@
     <nav>
       <a href="index.html">Leaderboard</a>
       <a href="playoffs.html">Playoffs</a>
+      <a href="methodology.html">Methodology</a>
     </nav>
   </div>
 </header>
 
 <main class="container">
+  <div id="metadata-banner" class="metadata-banner" aria-live="polite">Loading data metadata...</div>
+
+  <div class="page-title">
+    <h2 id="data-scope-heading">Data shown: 2024 Regular Season Pitcher Detail</h2>
+    <p>Pitch-level model outputs shown for the selected pitcher across the included regular season data scope.</p>
+  </div>
+
   <div id="pitcher-content">
     <p style="color:var(--text-muted);padding:2rem 0;">Loading pitcher data...</p>
   </div>
@@ -27,11 +35,11 @@
 
 <footer>
   <div class="container">
-    Model trained on 2023 regular season. Expected rates from XGBoost with isotonic calibration.
-    Data source: Baseball Savant (Statcast).
+    <a href="methodology.html">Methodology &amp; model details</a>
   </div>
 </footer>
 
+<script src="metadata-banner.js"></script>
 <script src="pitcher.js"></script>
 </body>
 </html>

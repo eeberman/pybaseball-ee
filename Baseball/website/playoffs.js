@@ -2,6 +2,7 @@
 (function () {
   'use strict';
 
+
   function pct(val) {
     return (val * 100).toFixed(1) + '%';
   }
@@ -28,6 +29,10 @@
     if (val > -0.02) return '#9ca3af';  // neutral
     if (val > -0.05) return '#fca5a5';  // faller
     return '#ef4444';                    // big faller
+  }
+
+  if (window.renderMetadataBanner) {
+    window.renderMetadataBanner({ pageType: 'playoffs' });
   }
 
   // Load playoff data

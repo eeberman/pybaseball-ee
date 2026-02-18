@@ -2,6 +2,11 @@
 (function () {
   'use strict';
 
+
+  if (window.renderMetadataBanner) {
+    window.renderMetadataBanner({ pageType: 'pitcher' });
+  }
+
   // Pitch type display names
   var PITCH_NAMES = {
     FF: '4-Seam FB', SI: 'Sinker', FC: 'Cutter', CH: 'Changeup',

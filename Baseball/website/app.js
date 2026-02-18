@@ -6,6 +6,10 @@
   let sortCol = 'whiff_skill';
   let sortAsc = false;
 
+  if (window.renderMetadataBanner) {
+    window.renderMetadataBanner({ pageType: 'leaderboard' });
+  }
+
   // --- Helpers ---
   function pct(val) {
     return (val * 100).toFixed(1) + '%';

@@ -83,6 +83,43 @@ nav a:hover, nav a.active {
   font-size: 0.875rem;
 }
 
+
+.metadata-banner {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.metadata-banner strong {
+  color: #bae6fd;
+}
+
+.methodology-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.methodology-card h3 {
+  margin-bottom: 0.5rem;
+}
+
+.methodology-card p,
+.methodology-card li {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.methodology-card ul {
+  padding-left: 1.25rem;
+}
+
 /* === Filters === */
 .filters {
   display: flex;

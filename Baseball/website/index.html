@@ -14,14 +14,17 @@
     <nav>
       <a href="index.html" class="active">Leaderboard</a>
       <a href="playoffs.html">Playoffs</a>
+      <a href="methodology.html">Methodology</a>
     </nav>
   </div>
 </header>
 
 <main class="container">
+  <div id="metadata-banner" class="metadata-banner" aria-live="polite">Loading data metadata...</div>
+
   <div class="page-title">
-    <h2>2024 Regular Season Leaderboard</h2>
-    <p>Whiff skill = actual whiff rate - expected whiff rate. Positive = pitcher generates more whiffs than expected by the model.</p>
+    <h2 id="data-scope-heading">Data shown: 2024 Regular Season</h2>
+    <p>Leaderboard ranks pitchers by whiff skill (actual whiff rate - expected whiff rate).</p>
   </div>
 
   <div class="filters">
@@ -60,11 +63,11 @@
 
 <footer>
   <div class="container">
-    Model trained on 2023 regular season. Expected rates from XGBoost with isotonic calibration.
-    Data source: Baseball Savant (Statcast).
+    <a href="methodology.html">Methodology &amp; model details</a>
   </div>
 </footer>
 
+<script src="metadata-banner.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

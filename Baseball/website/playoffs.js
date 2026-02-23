@@ -34,10 +34,18 @@
   Promise.all([
     fetch('data/pitchers_playoffs.json').then(function (r) { return r.json(); }),
     fetch('data/playoff_comparison.json').then(function (r) { return r.json(); }),
+    fetch('data/metadata.json').then(function (r) { return r.json(); }),
   ])
   .then(function (results) {
     var poData = results[0];
     var compData = results[1];
+    var metadata = results[2];
+
+    var season = metadata.seasons_included ? metadata.seasons_included[0] : '2024';
+    var headingEl = document.getElementById('po-season');
+    var footerEl = document.getElementById('po-season-footer');
+    if (headingEl) { headingEl.textContent = season; }
+    if (footerEl) { footerEl.textContent = season; }
 
     renderPoLeaderboard(poData.pitchers);
     renderComparisonChart(compData.pitchers);

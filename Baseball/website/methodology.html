@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methodology - Pitcher Whiff Skill</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .method-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .method-section h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+    .method-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1rem 0 0.5rem;
+      color: var(--text);
+    }
+    .method-section p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+    .method-section ul {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      line-height: 1.7;
+      padding-left: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .method-section li { margin-bottom: 0.2rem; }
+
+    .metrics-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+    .metrics-table th {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .metrics-table td {
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.75rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .metrics-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+    .formula-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.875rem;
+      color: var(--accent);
+      margin: 0.75rem 0;
+    }
+
+    .highlight-box {
+      background: rgba(56, 189, 248, 0.07);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 0.75rem 1rem;
+      margin: 0.75rem 0;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Zone grid in methodology */
+    .zone-demo-wrapper {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+    .zone-demo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 3px;
+    }
+    .zone-demo-cell {
+      width: 80px;
+      height: 60px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.3;
+    }
+    .zone-demo-cell span { font-size: 0.6rem; color: var(--border); display: block; }
+    .zone-demo-x-labels {
+      display: flex;
+      justify-content: space-around;
+      max-width: 246px;
+      margin-top: 0.4rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .zone-demo-y-labels {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      height: 186px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: right;
+      min-width: 50px;
+    }
+    .zone-bounds-table {
+      font-size: 0.75rem;
+    }
+    .zone-bounds-table th, .zone-bounds-table td {
+      padding: 0.3rem 0.6rem;
+    }
+
+    .cascade-diagram {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .cascade-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text);
+      text-align: center;
+    }
+    .cascade-box .sub { font-size: 0.7rem; color: var(--text-muted); }
+    .cascade-arrow { color: var(--text-muted); font-size: 1.2rem; }
+    .cascade-split {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .cascade-split-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .threshold-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin: 0.75rem 0;
+    }
+    .threshold-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-size: 0.8rem;
+    }
+    .threshold-card .t-label { color: var(--text-muted); margin-bottom: 0.25rem; }
+    .threshold-card .t-value { color: var(--accent); font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>Pitcher Whiff Skill</h1>
+    <nav>
+      <a href="index.html">Leaderboard</a>
+      <a href="playoffs.html">Playoffs</a>
+      <a href="methodology.html" class="active">Methodology</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="page-title">
+    <h2>Methodology</h2>
+    <p>How whiff skill is measured, how the model is built, and what the numbers mean.</p>
+  </div>
+
+  <!-- 1. What is Whiff Skill -->
+  <div class="method-section">
+    <h2>What Is Whiff Skill?</h2>
+    <p>Not all pitchers face the same quality of hitters, and not all pitches are equally hittable. A fastball at the knees is harder to put the bat on than a hanging breaking ball at the belt. If we simply count whiffs, we're conflating pitcher ability with the quality of pitches thrown.</p>
+    <div class="formula-box">Whiff Skill = Actual Whiff Rate &minus; Expected Whiff Rate</div>
+    <p>The model estimates an <strong>expected</strong> whiff rate for each pitch — the rate an average MLB batter would be expected to miss given that exact pitch physics and game situation. The pitcher's <strong>skill</strong> is how far their actual results deviate from those expectations.</p>
+    <ul>
+      <li><strong>Positive skill</strong> means the pitcher generates more whiffs than their pitch quality predicts — they have genuine swing-and-miss ability.</li>
+      <li><strong>Negative skill</strong> means batters are making more contact than the pitch physics would suggest.</li>
+      <li><strong>Zero skill</strong> means the pitcher is performing exactly as their pitches predict.</li>
+    </ul>
+    <div class="highlight-box">
+      The model sees only pitch physics and game state — not the pitcher's name, team, or history. This ensures that skill reflects what the pitcher does <em>above and beyond</em> their stuff, rather than just having good stuff.
+    </div>
+  </div>
+
+  <!-- 2. Model Architecture -->
+  <div class="method-section">
+    <h2>Model Architecture</h2>
+    <p>Predicting whiffs requires answering two questions: did the batter swing? And if so, did they miss? These are different prediction problems, so we use a two-stage cascade.</p>
+
+    <div class="cascade-diagram">
+      <div class="cascade-box">
+        Pitch<br><span class="sub">pitch physics + game state</span>
+      </div>
+      <span class="cascade-arrow">&#8594;</span>
+      <div class="cascade-box">
+        Model 1<br><span class="sub">Swing vs. Take<br>XGBoost</span>
+      </div>
+      <span class="cascade-arrow">&#8594;</span>
+      <div class="cascade-split">
+        <div class="cascade-split-item">Take &#x2192; (no further prediction)</div>
+        <div class="cascade-split-item">Swing &#x2192; Model 2: Whiff vs. Contact</div>
+      </div>
+      <span class="cascade-arrow">&#8594;</span>
+      <div class="cascade-box">
+        Expected Whiff Prob.<br><span class="sub">+ isotonic calibration</span>
+      </div>
+    </div>
+
+    <h3>Model 1 — Swing vs. Take</h3>
+    <p>XGBoost binary classifier on all pitches. Balanced classes (~52% takes, ~48% swings). 500 rounds with early stopping.</p>
+
+    <h3>Model 2 — Whiff vs. Contact</h3>
+    <p>XGBoost binary classifier on swings only. Class imbalance handled with <code>scale_pos_weight=3.26</code> (whiffs are ~23.5% of swings). Regularized with <code>max_depth=4</code>, <code>min_child_weight=5</code>.</p>
+    <p>Probability outputs go through <strong>isotonic calibration</strong> — a non-parametric post-processing step that maps raw XGBoost scores to well-calibrated probabilities. This reduces the Brier score by ~25% on the test set.</p>
+
+    <h3>Pitch Clustering</h3>
+    <p>Before training, each pitcher's pitches are clustered by physical characteristics (velocity, spin rate, movement, release point) using Gaussian Mixture Models with BIC-selected k=2–6 clusters. The most common pitch type in each cluster becomes its label (<code>pitch_type_mode</code>). This is a cleaner signal than raw Statcast pitch type classifications, which can be inconsistent for similar pitches.</p>
+  </div>
+
+  <!-- 3. Training Split -->
+  <div class="method-section">
+    <h2>Training Split</h2>
+    <p>All splits are strictly temporal — no data from future seasons appears in earlier training sets. This prevents any form of lookahead bias.</p>
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Split</th>
+          <th>Period</th>
+          <th>Pitches (Step 1)</th>
+          <th>Swings (Step 2)</th>
+          <th>Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Train</td><td>2023 Apr–Aug</td><td>579,603</td><td>276,007</td><td>Model training</td></tr>
+        <tr><td>Val</td><td>2023 Sep–Oct</td><td>137,674</td><td>65,835</td><td>Early stopping, hyperparameter tuning</td></tr>
+        <tr><td>Test</td><td>2024 Apr–Sep</td><td>703,526</td><td>338,433</td><td>All reported metrics, leaderboard data</td></tr>
+      </tbody>
+    </table>
+    <p>The test set is the entire 2024 regular season — the leaderboard only uses pitchers with at least 250 pitches in this period.</p>
+  </div>
+
+  <!-- 4. Feature Design -->
+  <div class="method-section">
+    <h2>Feature Design</h2>
+    <h3>What's Included</h3>
+    <ul>
+      <li><strong>Pitch physics</strong>: velocity, spin rate, horizontal and vertical movement (<code>pfx_x</code>, <code>pfx_z</code>), acceleration components (<code>ax</code>, <code>ay</code>, <code>az</code>)</li>
+      <li><strong>Trajectory / deception</strong>: <code>time_to_plate</code>, <code>late_break_z</code>/<code>late_break_x</code> (movement per second), <code>approach_angle_z</code>/<code>approach_angle_x</code></li>
+      <li><strong>Batter-relative coordinates</strong>: <code>plate_x_batter</code> flips the horizontal axis for left-handed batters so "inside" always means the same thing regardless of handedness</li>
+      <li><strong>Zone analysis</strong>: <code>in_zone</code>, distance outside zone (<code>x_out_mag</code>, <code>z_out_signed</code>), batter's personal zone height (<code>plate_z_rel</code>)</li>
+      <li><strong>Game state</strong>: count (balls-strikes), two-strike flag, runners on base, score differential bucket</li>
+      <li><strong>Pitch type</strong>: one-hot encoded cluster label (FF, SL, CH, CU, etc.)</li>
+      <li><strong>Handedness matchup</strong>: <code>same_side</code> flag (pitcher/batter same hand)</li>
+    </ul>
+
+    <h3>What's Deliberately Excluded</h3>
+    <p>Cluster-derived physical statistics — mean velocity, mean spin, mean movement per pitcher-cluster — are computed but <strong>excluded from training</strong>. These features encode pitcher identity; including them would mean "expected" is partially determined by <em>who</em> threw the pitch, defeating the purpose of skill isolation.</p>
+    <div class="highlight-box">The goal is for <em>expected</em> to represent what an average batter does against <em>this exact pitch</em>, not against <em>this pitcher's typical pitch</em>. Nine cluster-derived features are excluded for this reason.</div>
+
+    <h3>Top Features by Importance (Model 2)</h3>
+    <table class="metrics-table">
+      <thead><tr><th>Rank</th><th>Feature</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>in_zone</td><td>Binary: pitch in strike zone — single most important split</td></tr>
+        <tr><td>2</td><td>plate_z_rel</td><td>Vertical position as fraction of batter's zone height</td></tr>
+        <tr><td>3</td><td>pitch_type_mode_SI</td><td>Sinker indicator</td></tr>
+        <tr><td>5</td><td>two_strikes</td><td>Game state: 2-strike count</td></tr>
+        <tr><td>8</td><td>approach_angle_z</td><td>Vertical trajectory slope from release to plate</td></tr>
+        <tr><td>10</td><td>az</td><td>Vertical acceleration (Magnus force component)</td></tr>
+        <tr><td>16</td><td>late_break_z</td><td>Vertical movement rate (pfx_z / time_to_plate)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5. Model Performance -->
+  <div class="method-section">
+    <h2>Model Performance</h2>
+    <h3>Model 1 — Swing vs. Take</h3>
+    <table class="metrics-table">
+      <thead><tr><th>Split</th><th>ROC-AUC</th><th>PR-AUC</th><th>Brier</th><th>Accuracy</th></tr></thead>
+      <tbody>
+        <tr><td>Train</td><td>0.8667</td><td>0.8508</td><td>0.1491</td><td>77.9%</td></tr>
+        <tr><td>Val</td><td>0.8440</td><td>0.8287</td><td>0.1611</td><td>75.8%</td></tr>
+        <tr><td>Test</td><td>0.8426</td><td>0.8292</td><td>0.1619</td><td>75.8%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Model 2 — Whiff vs. Contact</h3>
+    <table class="metrics-table">
+      <thead><tr><th>Split</th><th>ROC-AUC</th><th>PR-AUC</th><th>Brier (uncal.)</th><th>Brier (cal.)</th></tr></thead>
+      <tbody>
+        <tr><td>Train</td><td>0.7919</td><td>0.6020</td><td>0.1815</td><td>—</td></tr>
+        <tr><td>Val</td><td>0.7681</td><td>0.5733</td><td>0.1901</td><td>—</td></tr>
+        <tr><td>Test</td><td>0.7682</td><td>0.5675</td><td>0.1899</td><td>0.1420</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Zone Diagnostics (Test Set)</h3>
+    <table class="metrics-table">
+      <thead><tr><th>Zone</th><th>ROC-AUC</th><th>PR-AUC</th><th>Whiff Rate</th><th>N Swings</th></tr></thead>
+      <tbody>
+        <tr><td>In-zone</td><td>0.6797</td><td>0.2681</td><td>14.4%</td><td>228,629 (65.6%)</td></tr>
+        <tr><td>Out-of-zone</td><td>0.7578</td><td>0.7049</td><td>40.1%</td><td>120,064 (34.4%)</td></tr>
+        <tr><td>OOZ Breaking Balls</td><td>0.7744</td><td>0.8059</td><td>52.6%</td><td>42,487 (12.2%)</td></tr>
+        <tr><td>OOZ Non-Breaking</td><td>0.7230</td><td>0.5881</td><td>33.3%</td><td>77,577</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. Calibration -->
+  <div class="method-section">
+    <h2>Calibration</h2>
+    <p>A well-calibrated model means: when it predicts 80% probability, the actual rate is close to 80%. Calibration is critical for the skill metric — if probabilities are biased, the "expected" values are wrong and skill scores become noise.</p>
+    <p>Isotonic calibration reduces the Brier score from 0.1899 to 0.1420 on the test set — a 25% improvement. The model's out-of-zone breaking ball probabilities illustrate how good the calibration is:</p>
+    <table class="metrics-table">
+      <thead><tr><th>Prediction Bin</th><th>N Pitches</th><th>Actual Whiff%</th><th>Calibration Error</th></tr></thead>
+      <tbody>
+        <tr><td>&lt; 0.30</td><td>8,604 (20.3%)</td><td>22.7%</td><td>&minus;1.2%</td></tr>
+        <tr><td>0.40 – 0.60</td><td>11,246 (26.5%)</td><td>50.6%</td><td>+0.3%</td></tr>
+        <tr><td>&ge; 0.80</td><td>6,690 (15.7%)</td><td>91.8%</td><td>&minus;1.1%</td></tr>
+      </tbody>
+    </table>
+    <p>When the model predicts ~90% whiff probability, the actual rate is 91.8%. The errors are under 1.5 percentage points across the full range.</p>
+  </div>
+
+  <!-- 7. Two-Problem Discovery -->
+  <div class="method-section">
+    <h2>The Two-Problem Discovery</h2>
+    <p>Deep analysis revealed that whiff prediction is actually <em>two different problems</em> requiring different thinking:</p>
+
+    <h3>In-Zone Pitches (65% of swings) — Rare Event Detection</h3>
+    <p>Whiff rate is 14.4% — a rare event. The model achieves only PR-AUC 0.27 here. This is the hardest part of the prediction task: most in-zone swings result in contact, so predicting which ones don't requires very fine signal.</p>
+
+    <h3>Out-of-Zone Breaking Balls (12% of swings) — Balanced but Chaotic</h3>
+    <p>With a 52.6% whiff rate, this is essentially a coin flip on average. But the model is <strong>not</strong> just predicting 50% — it achieves PR-AUC 0.81 here. The key insight is that the model finds real signal: when it predicts &gt;80% probability, the actual whiff rate is 91.8%. When it predicts &lt;30%, the actual rate is 22.7%.</p>
+
+    <div class="highlight-box">
+      The high PR-AUC ceiling of OOZ breaking ball predictions doesn't mean the model is better at predicting them — it means there's more separable signal in the data. The in-zone rare event problem is where the biggest opportunity for improvement lies.
+    </div>
+
+    <p>Both problem types are kept in the model rather than filtering. Removing OOZ breaking balls would bias skill metrics toward easier-to-predict pitches, and those are often exactly where skill differences emerge most clearly.</p>
+  </div>
+
+  <!-- 8. Qualification Thresholds -->
+  <div class="method-section">
+    <h2>Qualification Thresholds</h2>
+    <p>Sample size requirements are applied before including any pitcher in the leaderboard or any breakdown in a pitcher's detail page.</p>
+    <div class="threshold-grid">
+      <div class="threshold-card">
+        <div class="t-label">RS leaderboard (min pitches)</div>
+        <div class="t-value">250</div>
+      </div>
+      <div class="threshold-card">
+        <div class="t-label">Pitch type breakdown (min pitches per type)</div>
+        <div class="t-value">20</div>
+      </div>
+      <div class="threshold-card">
+        <div class="t-label">Zone heatmap (min pitches per zone)</div>
+        <div class="t-value">10</div>
+      </div>
+      <div class="threshold-card">
+        <div class="t-label">Playoff leaderboard (min PO pitches)</div>
+        <div class="t-value">50</div>
+      </div>
+      <div class="threshold-card">
+        <div class="t-label">RS/PO comparison (RS min + PO min)</div>
+        <div class="t-value">250 + 50</div>
+      </div>
+    </div>
+    <p>The <strong>confidence</strong> badge on the playoff leaderboard reflects playoff pitch count: <span class="confidence-badge low">low</span> &lt;100 pitches, <span class="confidence-badge medium">medium</span> 100–199, <span class="confidence-badge high">high</span> 200+. Low-confidence playoff results should be interpreted cautiously — a 5-pitch sample is not meaningful.</p>
+  </div>
+
+  <!-- 9. Zone Grid -->
+  <div class="method-section">
+    <h2>Zone Grid</h2>
+    <p>The pitcher detail page shows a 3&times;3 zone heatmap using <strong>batter-relative coordinates</strong>. Horizontal position is flipped for left-handed batters so "inside" always refers to the batter's inside edge regardless of handedness.</p>
+
+    <div class="zone-demo-wrapper">
+      <div>
+        <div style="display:flex;align-items:flex-start;gap:0.75rem;">
+          <div class="zone-demo-y-labels">
+            <span>High</span>
+            <span>Middle</span>
+            <span>Low</span>
+          </div>
+          <div>
+            <div class="zone-demo-grid">
+              <div class="zone-demo-cell">High Inside<span>x &lt; &minus;0.27<br>z &ge; 3.0</span></div>
+              <div class="zone-demo-cell">High Middle<span>&minus;0.27 &le; x &lt; 0.27<br>z &ge; 3.0</span></div>
+              <div class="zone-demo-cell">High Away<span>x &ge; 0.27<br>z &ge; 3.0</span></div>
+              <div class="zone-demo-cell">Mid Inside<span>x &lt; &minus;0.27<br>2.0 &le; z &lt; 3.0</span></div>
+              <div class="zone-demo-cell">Mid Middle<span>&minus;0.27 &le; x &lt; 0.27<br>2.0 &le; z &lt; 3.0</span></div>
+              <div class="zone-demo-cell">Mid Away<span>x &ge; 0.27<br>2.0 &le; z &lt; 3.0</span></div>
+              <div class="zone-demo-cell">Low Inside<span>x &lt; &minus;0.27<br>1.5 &le; z &lt; 2.0</span></div>
+              <div class="zone-demo-cell">Low Middle<span>&minus;0.27 &le; x &lt; 0.27<br>1.5 &le; z &lt; 2.0</span></div>
+              <div class="zone-demo-cell">Low Away<span>x &ge; 0.27<br>1.5 &le; z &lt; 2.0</span></div>
+            </div>
+            <div class="zone-demo-x-labels">
+              <span>Inside</span>
+              <span>Middle</span>
+              <span>Away</span>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5rem;">x = plate_x_batter (ft from center, batter's perspective). z = plate_z (ft from ground).</p>
+      </div>
+
+      <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.7;">
+        <p><strong style="color:var(--text);">Horizontal boundaries</strong> (ft from plate center, batter-relative):</p>
+        <ul style="padding-left:1.2rem;font-size:0.8rem;">
+          <li>Inside: x &lt; &minus;0.27</li>
+          <li>Middle: &minus;0.27 &le; x &lt; 0.27</li>
+          <li>Away: x &ge; 0.27</li>
+        </ul>
+        <p style="margin-top:0.5rem;"><strong style="color:var(--text);">Vertical boundaries</strong> (ft from ground):</p>
+        <ul style="padding-left:1.2rem;font-size:0.8rem;">
+          <li>High: z &ge; 3.0</li>
+          <li>Middle: 2.0 &le; z &lt; 3.0</li>
+          <li>Low: 1.5 &le; z &lt; 2.0</li>
+        </ul>
+        <p style="margin-top:0.5rem;">Zones with fewer than 10 pitches show N/A.<br>Color scale: green = more whiffs than expected,<br>red = fewer whiffs than expected.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="container">
+    Data source: Baseball Savant (Statcast). Model trained on 2023 regular season; evaluated on 2024 regular season.
+  </div>
+</footer>
+
+</body>
+</html>

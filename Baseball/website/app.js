@@ -25,15 +25,15 @@
   }
 
   // --- Render ---
-  function renderTable(pitchers) {
+  function renderTable(pitchers, totalCount) {
     var tbody = document.getElementById('table-body');
     if (pitchers.length === 0) {
       tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-muted);">No pitchers match your filters.</td></tr>';
-      document.getElementById('result-count').textContent = '0 pitchers';
+      document.getElementById('result-count').textContent = 'Showing 0 of ' + totalCount + ' pitchers';
       return;
     }
 
-    document.getElementById('result-count').textContent = pitchers.length + ' pitchers';
+    document.getElementById('result-count').textContent = 'Showing ' + pitchers.length + ' of ' + totalCount + ' pitchers';
 
     var html = '';
     for (var i = 0; i < pitchers.length; i++) {
@@ -108,7 +108,10 @@
   }
 
   function refresh() {
-    renderTable(getFiltered());
+    var filtered = getFiltered();
+    var rowLimit = parseInt(document.getElementById('row-limit').value, 10) || 25;
+    var displayed = filtered.slice(0, rowLimit);
+    renderTable(displayed, filtered.length);
   }
 
   // --- Init ---
@@ -127,9 +130,18 @@
     }
   }
 
-  fetch('data/pitchers_overall.json')
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
+  Promise.all([
+    fetch('data/pitchers_overall.json').then(function (r) { return r.json(); }),
+    fetch('data/metadata.json').then(function (r) { return r.json(); }),
+  ])
+    .then(function (results) {
+      var data = results[0];
+      var metadata = results[1];
+
+      var season = metadata.seasons_included ? metadata.seasons_included[0] : '2024';
+      var seasonLabel = document.getElementById('season-label');
+      if (seasonLabel) { seasonLabel.textContent = season; }
+
       allPitchers = data.pitchers;
       populateTeams(allPitchers);
 
@@ -142,6 +154,7 @@
       document.getElementById('search').addEventListener('input', refresh);
       document.getElementById('team-filter').addEventListener('change', refresh);
       document.getElementById('min-pitches').addEventListener('input', refresh);
+      document.getElementById('row-limit').addEventListener('change', refresh);
 
       // Column sort
       var ths = document.querySelectorAll('thead th[data-col]');

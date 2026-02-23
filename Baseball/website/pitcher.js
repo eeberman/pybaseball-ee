@@ -73,11 +73,17 @@
     fetch('data/pitchers_overall.json').then(function (r) { return r.json(); }),
     fetch('data/pitchers_by_pitch_type.json').then(function (r) { return r.json(); }),
     fetch('data/pitchers_by_zone.json').then(function (r) { return r.json(); }),
+    fetch('data/metadata.json').then(function (r) { return r.json(); }),
   ])
   .then(function (results) {
     var overallData = results[0];
     var pitchTypeData = results[1];
     var zoneData = results[2];
+    var metadata = results[3];
+
+    var season = metadata.seasons_included ? metadata.seasons_included[0] : '2024';
+    var seasonEl = document.getElementById('data-season');
+    if (seasonEl) { seasonEl.textContent = season; }
 
     // Find pitcher in overall data
     var pitcher = null;

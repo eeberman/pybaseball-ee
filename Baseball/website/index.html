@@ -14,14 +14,16 @@
     <nav>
       <a href="index.html" class="active">Leaderboard</a>
       <a href="playoffs.html">Playoffs</a>
+      <a href="methodology.html">Methodology</a>
     </nav>
   </div>
 </header>
 
 <main class="container">
   <div class="page-title">
-    <h2>2024 Regular Season Leaderboard</h2>
-    <p>Whiff skill = actual whiff rate - expected whiff rate. Positive = pitcher generates more whiffs than expected by the model.</p>
+    <h2>Pitcher Whiff Skill Leaderboard</h2>
+    <p>Data shown: <span id="season-label">2024</span> Regular Season.</p>
+    <p>Whiff skill = actual whiff rate - expected whiff rate. Positive means a pitcher generates more whiffs than expected. <a href="methodology.html">Methodology details</a>.</p>
   </div>
 
   <div class="filters">
@@ -32,6 +34,15 @@
     <label style="font-size:0.85rem;color:var(--text-muted);">
       Min pitches:
       <input type="number" id="min-pitches" value="250" min="0" step="50" style="width:80px;">
+    </label>
+    <label style="font-size:0.85rem;color:var(--text-muted);">
+      Rows:
+      <select id="row-limit">
+        <option value="10">10</option>
+        <option value="25" selected>25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
     </label>
     <span id="result-count" style="font-size:0.85rem;color:var(--text-muted);"></span>
   </div>
@@ -46,9 +57,9 @@
           <th data-col="n_pitches" class="num">Pitches<span class="sort-indicator"></span></th>
           <th data-col="n_swings" class="num">Swings<span class="sort-indicator"></span></th>
           <th data-col="actual_whiff_rate" class="num">Whiff%<span class="sort-indicator"></span></th>
-          <th data-col="expected_whiff_rate" class="num">xWhiff%<span class="sort-indicator"></span></th>
-          <th data-col="whiff_skill" class="num">Skill<span class="sort-indicator"></span></th>
-          <th data-col="percentile" class="num">Pctl<span class="sort-indicator"></span></th>
+          <th data-col="expected_whiff_rate" class="num" title="xWhiff% — model-predicted whiff rate based on pitch physics and game situation">xWhiff%<span class="sort-indicator"></span></th>
+          <th data-col="whiff_skill" class="num" title="Skill — actual whiff rate minus expected (positive = generates more whiffs than predicted)">Skill<span class="sort-indicator"></span></th>
+          <th data-col="percentile" class="num" title="Percentile — rank among all qualified pitchers (100 = best)">Pctl<span class="sort-indicator"></span></th>
         </tr>
       </thead>
       <tbody id="table-body">
@@ -60,8 +71,7 @@
 
 <footer>
   <div class="container">
-    Model trained on 2023 regular season. Expected rates from XGBoost with isotonic calibration.
-    Data source: Baseball Savant (Statcast).
+    Data source: Baseball Savant (Statcast). Training and validation details are documented on the <a href="methodology.html">Methodology</a> page.
   </div>
 </footer>
 

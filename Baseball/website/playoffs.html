@@ -15,6 +15,7 @@
     <nav>
       <a href="index.html">Leaderboard</a>
       <a href="playoffs.html" class="active">Playoffs</a>
+      <a href="methodology.html">Methodology</a>
     </nav>
   </div>
 </header>
@@ -22,9 +23,16 @@
 <main class="container">
   <!-- Playoff Leaderboard -->
   <div class="page-title">
-    <h2>2024 Playoff Whiff Skill</h2>
+    <h2><span id="po-season">2024</span> Playoff Whiff Skill</h2>
     <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.5rem;">2024 Postseason: Oct 1 &ndash; Oct 30 (Wild Card, Division Series, LCS, World Series)</p>
     <p>Regular season model applied to playoff pitches. Skill = actual whiff rate - expected whiff rate.</p>
+    <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;">
+      Confidence reflects playoff pitch count:
+      <span class="confidence-badge high">high</span> 200+ pitches &nbsp;
+      <span class="confidence-badge medium">medium</span> 100–199 pitches &nbsp;
+      <span class="confidence-badge low">low</span> &lt;100 pitches.
+      Low-confidence results have high variance and should be interpreted cautiously.
+    </p>
   </div>
 
   <div class="table-wrapper">
@@ -62,7 +70,7 @@
 
 <footer>
   <div class="container">
-    Model trained on 2023 regular season. Applied to 2024 RS and full 2024 postseason (Oct 1&ndash;30) data to detect performance changes.
+    Data shown: <span id="po-season-footer">2024</span> Regular Season + Postseason. Training and validation details on the <a href="methodology.html">Methodology</a> page.
     Data source: Baseball Savant (Statcast).
   </div>
 </footer>

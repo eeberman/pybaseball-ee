@@ -383,6 +383,26 @@ if all(c in df.columns for c in TUNNEL_REQ_COLS):
     n_valid = df["tunnel_distance"].notna().sum()
     print(f"Tunnel distance: {n_valid:,} rows ({n_valid/len(df)*100:.1f}%), median {df['tunnel_distance'].median():.3f} ft")
 
+# --- Previous pitch type (mirrors 03_feature_engineering.py) ---
+# NaN on first pitch by a pitcher in an AB; dummy_na one-hot handles it.
+SEQ_ID_COLS = ["game_pk", "at_bat_number", "pitch_number", "pitcher"]
+if "pitch_type_mode" in df.columns and all(c in df.columns for c in SEQ_ID_COLS):
+    seq = df[SEQ_ID_COLS + ["pitch_type_mode"]].sort_values(
+        ["game_pk", "at_bat_number", "pitcher", "pitch_number"]
+    )
+    prev_type = (
+        seq.groupby(["game_pk", "at_bat_number", "pitcher"], sort=False)["pitch_type_mode"]
+        .shift(1)
+        .reindex(df.index)
+    )
+    df["prev_pitch_type_mode"] = prev_type
+    df["same_pitch_type_as_prev"] = (
+        prev_type.notna() & (df["pitch_type_mode"] == prev_type)
+    ).astype("int8")
+    n_valid = df["prev_pitch_type_mode"].notna().sum()
+    print(f"Previous pitch type: {n_valid:,} rows ({n_valid/len(df)*100:.1f}%)")
+    del seq, prev_type
+
 print(f"Feature engineering complete: {len(df):,} rows, {len(df.columns)} columns")
 
 # %%

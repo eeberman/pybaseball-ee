@@ -575,7 +575,8 @@ Based on OOZ analysis, the model handles OOZ breaking balls well (calibrated, fi
    - Pitch sequence patterns
 
 3. **Pitch sequencing features** (partially implemented):
-   - Previous pitch type/location (not yet implemented)
+   - ~~Previous pitch type~~ — **IMPLEMENTED** in `03_feature_engineering.py` (mirrored in `08_playoff_comparison.py`): `prev_pitch_type_mode` (shifted `pitch_type_mode`, same `[game_pk, at_bat_number, pitcher]` grouping as tunnel distance; NaN on first pitch per pitcher per AB, handled by `dummy_na` one-hot in `05` — registered in its `CATEGORICAL_COLS`) plus `same_pitch_type_as_prev` (int8 flag, 0 when no prior pitch)
+   - Previous pitch location (not yet implemented)
    - Velocity differential from previous pitch (not yet implemented)
    - ~~Tunnel distance from previous pitch~~ — **IMPLEMENTED** in `03_feature_engineering.py` (mirrored in `08_playoff_comparison.py`):
      - `tunnel_distance`: Euclidean (x, z) distance between this pitch and the previous pitch by the *same pitcher in the same at-bat* at the tunnel point, 23.8 ft from the plate (~batter's swing-decision point). Time to tunnel solved via full quadratic kinematics (`0.5*ay*t^2 + vy0*t + dy = 0`, linear fallback on invalid discriminant); (x, z) via full kinematics from `release_pos_*`, `v*0`, `a*`.

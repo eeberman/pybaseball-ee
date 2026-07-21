@@ -336,6 +336,39 @@ else:
     print(f"\nSkipping tunnel distance (missing columns: {missing})")
 
 # %%
+# === PREVIOUS PITCH TYPE (pitch sequencing) ===
+# Type of the previous pitch by the same pitcher in the same at-bat, using the
+# model's pitch-type representation (pitch_type_mode). NaN on the first pitch
+# by a pitcher in an AB — one-hot encoding in 05 uses dummy_na, so "no prior
+# pitch" gets its own indicator rather than a fabricated fill value.
+
+SEQ_ID_COLS = ["game_pk", "at_bat_number", "pitch_number", "pitcher"]
+if "pitch_type_mode" in df_fe.columns and all(c in df_fe.columns for c in SEQ_ID_COLS):
+    print("\n=== COMPUTING PREVIOUS PITCH TYPE ===")
+
+    seq = df_fe[SEQ_ID_COLS + ["pitch_type_mode"]].sort_values(
+        ["game_pk", "at_bat_number", "pitcher", "pitch_number"]
+    )
+    prev_type = (
+        seq.groupby(["game_pk", "at_bat_number", "pitcher"], sort=False)["pitch_type_mode"]
+        .shift(1)
+        .reindex(df_fe.index)
+    )
+    df_fe["prev_pitch_type_mode"] = prev_type
+    df_fe["same_pitch_type_as_prev"] = (
+        prev_type.notna() & (df_fe["pitch_type_mode"] == prev_type)
+    ).astype("int8")
+
+    n_valid = df_fe["prev_pitch_type_mode"].notna().sum()
+    n_same = df_fe["same_pitch_type_as_prev"].sum()
+    print(f"  prev_pitch_type_mode: computed for {n_valid} rows ({n_valid/len(df_fe)*100:.1f}%)")
+    print(f"  same as previous pitch: {n_same} rows ({n_same/max(n_valid,1)*100:.1f}% of sequenced)")
+
+    del seq, prev_type
+else:
+    print("\nSkipping previous pitch type (pitch_type_mode or ID columns missing)")
+
+# %%
 # Deviation from cluster mean (how unusual is this pitch for its cluster?)
 if "cluster_mean_velocity" in df_fe.columns:
     df_fe["velocity_vs_cluster"] = (
@@ -451,9 +484,11 @@ OPTIONAL_FINAL = [
     "approach_angle_z",
     "approach_angle_x",
     "accel_magnitude",
-    # Pitch sequencing (tunnel_distance NaN on first pitch by pitcher in AB — structural, not imputed)
+    # Pitch sequencing (NaN on first pitch by pitcher in AB — structural, not imputed)
     "tunnel_distance",
     "is_first_pitch_for_pitcher_in_ab",
+    "prev_pitch_type_mode",
+    "same_pitch_type_as_prev",
     # Deviation from cluster mean
     "velocity_vs_cluster",
     "spin_vs_cluster",

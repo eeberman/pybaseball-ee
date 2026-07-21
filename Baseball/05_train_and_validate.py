@@ -101,7 +101,7 @@ CLUSTER_FEATURES_TO_REMOVE = [
 # Categorical columns that need special handling
 # NOTE: pitch_cluster_name excluded - too high cardinality (3700+ unique values)
 #       It's pitcher-specific and would cause memory issues with one-hot encoding
-CATEGORICAL_COLS = ["p_throws", "stand", "count_state", "score_bucket", "pitch_type_mode"]
+CATEGORICAL_COLS = ["p_throws", "stand", "count_state", "score_bucket", "pitch_type_mode", "prev_pitch_type_mode"]
 HIGH_CARDINALITY_EXCLUDE = ["pitch_cluster_name"]  # Documented for future reference
 
 # Get feature columns

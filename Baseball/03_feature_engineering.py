@@ -369,6 +369,41 @@ else:
     print("\nSkipping previous pitch type (pitch_type_mode or ID columns missing)")
 
 # %%
+# === VELOCITY DIFFERENTIAL FROM PREVIOUS PITCH (pitch sequencing) ===
+# release_speed minus the previous pitch's (same pitcher, same at-bat).
+# Negative = slower than the prior pitch (e.g. changeup off a fastball).
+# NaN on first pitch by a pitcher in an AB — structural, not imputed (same
+# reasoning as tunnel_distance; XGBoost handles the NaNs natively).
+
+if "release_speed" in df_fe.columns and all(c in df_fe.columns for c in SEQ_ID_COLS):
+    print("\n=== COMPUTING VELOCITY DIFFERENTIAL ===")
+
+    speed = pd.to_numeric(df_fe["release_speed"], errors="coerce").astype("float64")
+    vseq = pd.DataFrame({
+        "game_pk": df_fe["game_pk"],
+        "at_bat_number": df_fe["at_bat_number"],
+        "pitcher": df_fe["pitcher"],
+        "pitch_number": df_fe["pitch_number"],
+        "release_speed": speed,
+    }).sort_values(["game_pk", "at_bat_number", "pitcher", "pitch_number"])
+    prev_speed = (
+        vseq.groupby(["game_pk", "at_bat_number", "pitcher"], sort=False)["release_speed"]
+        .shift(1)
+        .reindex(df_fe.index)
+    )
+    df_fe["velo_diff_from_prev"] = (speed - prev_speed).astype("float32")
+
+    n_valid = df_fe["velo_diff_from_prev"].notna().sum()
+    print(f"  velo_diff_from_prev: computed for {n_valid} rows ({n_valid/len(df_fe)*100:.1f}%)")
+    print(f"  median {df_fe['velo_diff_from_prev'].median():.2f} mph, "
+          f"p5 {df_fe['velo_diff_from_prev'].quantile(0.05):.2f}, "
+          f"p95 {df_fe['velo_diff_from_prev'].quantile(0.95):.2f}")
+
+    del speed, vseq, prev_speed
+else:
+    print("\nSkipping velocity differential (release_speed or ID columns missing)")
+
+# %%
 # Deviation from cluster mean (how unusual is this pitch for its cluster?)
 if "cluster_mean_velocity" in df_fe.columns:
     df_fe["velocity_vs_cluster"] = (
@@ -489,6 +524,7 @@ OPTIONAL_FINAL = [
     "is_first_pitch_for_pitcher_in_ab",
     "prev_pitch_type_mode",
     "same_pitch_type_as_prev",
+    "velo_diff_from_prev",
     # Deviation from cluster mean
     "velocity_vs_cluster",
     "spin_vs_cluster",

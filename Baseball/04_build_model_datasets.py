@@ -127,11 +127,13 @@ OPTIONAL_IMPUTE = [
     "velocity_vs_cluster",
     "spin_vs_cluster",
     "pfx_z_vs_cluster",
-    # NOTE: tunnel_distance is deliberately NOT in this list. Its NaNs are
-    # structural (first pitch by a pitcher in an at-bat, ~25% of rows), not
-    # sporadic tracking gaps — XGBoost's native missing-value handling deals
-    # with them better than forcing a median into a quarter of the data.
-    # is_first_pitch_for_pitcher_in_ab is a clean 0/1 flag with no nulls.
+    # NOTE: tunnel_distance and velo_diff_from_prev are deliberately NOT in
+    # this list. Their NaNs are structural (first pitch by a pitcher in an
+    # at-bat, ~25% of rows), not sporadic tracking gaps — XGBoost's native
+    # missing-value handling deals with them better than forcing a median
+    # into a quarter of the data.
+    # is_first_pitch_for_pitcher_in_ab / same_pitch_type_as_prev are clean
+    # 0/1 flags with no nulls.
 ]
 
 OPTIONAL_IMPUTE = [c for c in OPTIONAL_IMPUTE if c in df2.columns]

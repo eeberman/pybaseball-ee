@@ -403,6 +403,27 @@ if "pitch_type_mode" in df.columns and all(c in df.columns for c in SEQ_ID_COLS)
     print(f"Previous pitch type: {n_valid:,} rows ({n_valid/len(df)*100:.1f}%)")
     del seq, prev_type
 
+# --- Velocity differential from previous pitch (mirrors 03) ---
+# Structural NaN on first pitch per pitcher per AB; not imputed.
+if "release_speed" in df.columns and all(c in df.columns for c in SEQ_ID_COLS):
+    speed = pd.to_numeric(df["release_speed"], errors="coerce").astype("float64")
+    vseq = pd.DataFrame({
+        "game_pk": df["game_pk"],
+        "at_bat_number": df["at_bat_number"],
+        "pitcher": df["pitcher"],
+        "pitch_number": df["pitch_number"],
+        "release_speed": speed,
+    }).sort_values(["game_pk", "at_bat_number", "pitcher", "pitch_number"])
+    prev_speed = (
+        vseq.groupby(["game_pk", "at_bat_number", "pitcher"], sort=False)["release_speed"]
+        .shift(1)
+        .reindex(df.index)
+    )
+    df["velo_diff_from_prev"] = (speed - prev_speed).astype("float32")
+    n_valid = df["velo_diff_from_prev"].notna().sum()
+    print(f"Velocity differential: {n_valid:,} rows ({n_valid/len(df)*100:.1f}%)")
+    del speed, vseq, prev_speed
+
 print(f"Feature engineering complete: {len(df):,} rows, {len(df.columns)} columns")
 
 # %%

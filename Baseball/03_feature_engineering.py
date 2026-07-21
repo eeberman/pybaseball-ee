@@ -356,8 +356,10 @@ if "pitch_type_mode" in df_fe.columns and all(c in df_fe.columns for c in SEQ_ID
     )
     df_fe["prev_pitch_type_mode"] = prev_type
     df_fe["same_pitch_type_as_prev"] = (
-        prev_type.notna() & (df_fe["pitch_type_mode"] == prev_type)
-    ).astype("int8")
+        (prev_type.notna() & (df_fe["pitch_type_mode"] == prev_type))
+        .fillna(False)
+        .astype("int8")
+    )
 
     n_valid = df_fe["prev_pitch_type_mode"].notna().sum()
     n_same = df_fe["same_pitch_type_as_prev"].sum()

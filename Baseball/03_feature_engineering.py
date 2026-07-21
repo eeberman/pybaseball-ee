@@ -20,7 +20,7 @@ pd.set_option("display.width", None)
 
 # %%
 START_DT = "2023-04-01"
-END_DT = "2024-10-01"
+END_DT = "2023-10-01"
 
 IN_PATH = Path("data/processed") / f"statcast_{START_DT}_{END_DT}_clustered.parquet"
 OUT_PATH = Path("data/processed") / f"statcast_{START_DT}_{END_DT}_features.parquet"

@@ -22,14 +22,14 @@ pd.set_option("display.width", None)
 
 # Date range to pull from Statcast
 START_DT = "2023-04-01"
-END_DT = "2024-11-05"
+END_DT = "2023-10-01"
 
 # Split boundaries (must be in chronological order)
 # - Train: START_DT to TRAIN_END (exclusive)
 # - Val: TRAIN_END to VAL_END (exclusive)
 # - Test: VAL_END to END_DT
-TRAIN_END = "2023-09-01"  # First day of validation
-VAL_END = "2024-01-01"    # First day of test
+TRAIN_END = "2023-08-01"  # First day of validation
+VAL_END = "2023-09-01"    # First day of test
 
 # =============================================
 

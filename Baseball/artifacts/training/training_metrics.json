@@ -1,0 +1,103 @@
+{
+  "model1": {
+    "train": {
+      "accuracy": 0.7839177385054407,
+      "roc_auc": 0.873086948965233,
+      "pr_auc": 0.8575849886168478,
+      "brier_score": 0.1455913782119751
+    },
+    "val": {
+      "accuracy": 0.7602601685599121,
+      "roc_auc": 0.845870388819193,
+      "pr_auc": 0.8322390967011861,
+      "brier_score": 0.16015316545963287
+    },
+    "test": {
+      "accuracy": 0.7593579913392396,
+      "roc_auc": 0.844321808511143,
+      "pr_auc": 0.8295082543326839,
+      "brier_score": 0.16088686883449554
+    },
+    "best_iteration": 439
+  },
+  "model2": {
+    "train": {
+      "accuracy": 0.7452065335886184,
+      "roc_auc": 0.7978991235879163,
+      "pr_auc": 0.6094281432236031,
+      "brier_score": 0.17927135527133942
+    },
+    "val": {
+      "accuracy": 0.72943644148595,
+      "roc_auc": 0.7680907592940358,
+      "pr_auc": 0.5724822057024468,
+      "brier_score": 0.18835517764091492
+    },
+    "test": {
+      "accuracy": 0.7276822072633591,
+      "roc_auc": 0.766133684584286,
+      "pr_auc": 0.5706117709233548,
+      "brier_score": 0.1886349767446518
+    },
+    "best_iteration": 435,
+    "calibration": {
+      "brier_val_uncalibrated": 0.18835517764091492,
+      "brier_val_calibrated": 0.14369964599609375,
+      "brier_test_uncalibrated": 0.1886349767446518,
+      "brier_test_calibrated": 0.14378607273101807
+    },
+    "params": {
+      "max_depth": 4,
+      "eta": 0.1,
+      "subsample": 0.7,
+      "colsample_bytree": 0.8,
+      "min_child_weight": 5,
+      "gamma": 0.1,
+      "scale_pos_weight": 3.26,
+      "seed": 42
+    },
+    "zone_diagnostics": {
+      "in_zone": {
+        "accuracy": 0.8011229009992789,
+        "roc_auc": 0.6783768024686609,
+        "pr_auc": 0.27410107177112547,
+        "brier_score": 0.15777139365673065
+      },
+      "out_of_zone": {
+        "accuracy": 0.5940385246285794,
+        "roc_auc": 0.7624363867736995,
+        "pr_auc": 0.7064379585181201,
+        "brier_score": 0.2447989583015442
+      },
+      "ooz_breaking": {
+        "accuracy": 0.6058477855811953,
+        "roc_auc": 0.7864528414348613,
+        "pr_auc": 0.8129298590988415,
+        "brier_score": 0.24150127172470093
+      },
+      "ooz_non_breaking": {
+        "accuracy": 0.5883008356545961,
+        "roc_auc": 0.7293607462763936,
+        "pr_auc": 0.6001156781357253,
+        "brier_score": 0.24640122056007385
+      }
+    }
+  },
+  "cascade": {
+    "test_size": 125855,
+    "predicted_swings": 59775,
+    "true_positives_m1": 44827,
+    "false_positives_m1": 14948,
+    "reachable_swings": 44827,
+    "cascade_accuracy": 0.6666878550713122,
+    "m2_reachable_roc_auc": 0.7168849167506075
+  },
+  "year_over_year": {
+    "model1_val_roc_auc": 0.845870388819193,
+    "model1_test_roc_auc": 0.844321808511143,
+    "model1_diff": -0.0015485803080499405,
+    "model2_val_roc_auc": 0.7680907592940358,
+    "model2_test_roc_auc": 0.766133684584286,
+    "model2_diff": -0.0019570747097498176
+  }
+}

@@ -1,0 +1,1630 @@
+{
+  "input_path": "data/processed/statcast_2023-04-01_2023-10-01_labeled.parquet",
+  "output_path": "data/processed/statcast_2023-04-01_2023-10-01_clustered.parquet",
+  "cluster_cols": [
+    "release_speed",
+    "effective_speed",
+    "release_spin_rate",
+    "pfx_x",
+    "pfx_z",
+    "spin_axis",
+    "release_extension",
+    "release_pos_x",
+    "release_pos_z",
+    "release_pos_y",
+    "vx0",
+    "vy0",
+    "vz0",
+    "ax",
+    "ay",
+    "az"
+  ],
+  "kmin": 2,
+  "kmax": 6,
+  "min_pitches_per_pitcher": 200,
+  "n_pitchers_clustered": 642,
+  "n_pitchers_skipped": 220,
+  "pitcher_rows_clustered": 688010,
+  "pitcher_records": [
+    {
+      "pitcher": 687798,
+      "n_pitches": 392,
+      "k_chosen": 4,
+      "bic": -4630.669626849942,
+      "ari_vs_pitch_type": 0.7182982503618638,
+      "nmi_vs_pitch_type": 0.8314925275638527
+    },
+    {
+      "pitcher": 608344,
+      "n_pitches": 1260,
+      "k_chosen": 4,
+      "bic": -14134.983889925374,
+      "ari_vs_pitch_type": 0.6919540866439583,
+      "nmi_vs_pitch_type": 0.8560285243414014
+    },
+    {
+      "pitcher": 670167,
+      "n_pitches": 815,
+      "k_chosen": 4,
+      "bic": -11164.95689259804,
+      "ari_vs_pitch_type": 0.9370954823170754,
+      "nmi_vs_pitch_type": 0.9023818532288931
+    },
+    {
+      "pitcher": 657514,
+      "n_pitches": 857,
+      "k_chosen": 4,
+      "bic": -14654.900023014832,
+      "ari_vs_pitch_type": 0.7381875608393437,
+      "nmi_vs_pitch_type": 0.7546467991541577
+    },
+    {
+      "pitcher": 666974,
+      "n_pitches": 1003,
+      "k_chosen": 5,
+      "bic": -6861.7649426137805,
+      "ari_vs_pitch_type": 0.786694325473551,
+      "nmi_vs_pitch_type": 0.8277086022915137
+    },
+    {
+      "pitcher": 672335,
+      "n_pitches": 860,
+      "k_chosen": 3,
+      "bic": -11814.84961629835,
+      "ari_vs_pitch_type": 0.8588495489063447,
+      "nmi_vs_pitch_type": 0.8665949332733632
+    },
+    {
+      "pitcher": 656557,
+      "n_pitches": 1701,
+      "k_chosen": 4,
+      "bic": -15630.54250266838,
+      "ari_vs_pitch_type": 0.8882330451366246,
+      "nmi_vs_pitch_type": 0.8499094365578534
+    },
+    {
+      "pitcher": 669084,
+      "n_pitches": 371,
+      "k_chosen": 3,
+      "bic": -2248.097358463002,
+      "ari_vs_pitch_type": 0.9163369225717423,
+      "nmi_vs_pitch_type": 0.8942032951254953
+    },
+    {
+      "pitcher": 660261,
+      "n_pitches": 1387,
+      "k_chosen": 5,
+      "bic": -10892.556979819532,
+      "ari_vs_pitch_type": 0.6048581550417643,
+      "nmi_vs_pitch_type": 0.773988171058783
+    },
+    {
+      "pitcher": 669330,
+      "n_pitches": 1887,
+      "k_chosen": 5,
+      "bic": -19872.35057749474,
+      "ari_vs_pitch_type": 0.9906808944660331,
+      "nmi_vs_pitch_type": 0.9832856098806056
+    },
+    {
+      "pitcher": 543056,
+      "n_pitches": 814,
+      "k_chosen": 5,
+      "bic": -2984.2436412291618,
+      "ari_vs_pitch_type": 0.9056783359950991,
+      "nmi_vs_pitch_type": 0.9169527294934277
+    },
+    {
+      "pitcher": 680694,
+      "n_pitches": 2622,
+      "k_chosen": 5,
+      "bic": -29388.905560026193,
+      "ari_vs_pitch_type": 0.9544861390139442,
+      "nmi_vs_pitch_type": 0.9368950800903088
+    },
+    {
+      "pitcher": 623474,
+      "n_pitches": 487,
+      "k_chosen": 3,
+      "bic": -2206.9841113706057,
+      "ari_vs_pitch_type": 0.8777358782920184,
+      "nmi_vs_pitch_type": 0.8773870940859577
+    },
+    {
+      "pitcher": 594943,
+      "n_pitches": 460,
+      "k_chosen": 4,
+      "bic": -3945.197529903828,
+      "ari_vs_pitch_type": 0.8228404720498718,
+      "nmi_vs_pitch_type": 0.9029585155179096
+    },
+    {
+      "pitcher": 660761,
+      "n_pitches": 611,
+      "k_chosen": 3,
+      "bic": -3478.758422136665,
+      "ari_vs_pitch_type": 0.7719680584897195,
+      "nmi_vs_pitch_type": 0.8295117010927606
+    },
+    {
+      "pitcher": 695243,
+      "n_pitches": 604,
+      "k_chosen": 3,
+      "bic": -4469.014312817046,
+      "ari_vs_pitch_type": 0.920135537871235,
+      "nmi_vs_pitch_type": 0.8683935703175425
+    },
+    {
+      "pitcher": 666205,
+      "n_pitches": 1377,
+      "k_chosen": 5,
+      "bic": -12959.097369907466,
+      "ari_vs_pitch_type": 0.680708893957933,
+      "nmi_vs_pitch_type": 0.8565813458923673
+    },
+    {
+      "pitcher": 676664,
+      "n_pitches": 2843,
+      "k_chosen": 5,
+      "bic": -43243.33933420914,
+      "ari_vs_pitch_type": 0.6082120255600653,
+      "nmi_vs_pitch_type": 0.74199348260632
+    },
+    {
+      "pitcher": 605177,
+      "n_pitches": 909,
+      "k_chosen": 3,
+      "bic": -9856.782288724626,
+      "ari_vs_pitch_type": 0.9734273940932354,
+      "nmi_vs_pitch_type": 0.9496162724030932
+    },
+    {
+      "pitcher": 605288,
+      "n_pitches": 1846,
+      "k_chosen": 5,
+      "bic": -24680.95575642254,
+      "ari_vs_pitch_type": 0.9907839107894586,
+      "nmi_vs_pitch_type": 0.977133691920659
+    },
+    {
+      "pitcher": 694037,
+      "n_pitches": 491,
+      "k_chosen": 2,
+      "bic": -3647.3544413446316,
+      "ari_vs_pitch_type": 0.8632162535122988,
+      "nmi_vs_pitch_type": 0.8117307208012347
+    },
+    {
+      "pitcher": 592767,
+      "n_pitches": 2393,
+      "k_chosen": 5,
+      "bic": -28316.843439769887,
+      "ari_vs_pitch_type": 0.6299378654381217,
+      "nmi_vs_pitch_type": 0.7579868156251278
+    },
+    {
+      "pitcher": 623465,
+      "n_pitches": 894,
+      "k_chosen": 3,
+      "bic": -8818.948478374461,
+      "ari_vs_pitch_type": 0.8824130664225623,
+      "nmi_vs_pitch_type": 0.876450365775891
+    },
+    {
+      "pitcher": 548389,
+      "n_pitches": 1427,
+      "k_chosen": 6,
+      "bic": -12767.487711652342,
+      "ari_vs_pitch_type": 0.8234711483593996,
+      "nmi_vs_pitch_type": 0.8595306770744774
+    },
+    {
+      "pitcher": 686752,
+      "n_pitches": 651,
+      "k_chosen": 3,
+      "bic": -4871.981449339362,
+      "ari_vs_pitch_type": 1.0,
+      "nmi_vs_pitch_type": 1.0
+    },
+    {
+      "pitcher": 573124,
+      "n_pitches": 803,
+      "k_chosen": 5,
+      "bic": -11492.798353525144,
+      "ari_vs_pitch_type": 0.7552201286007214,
+      "nmi_vs_pitch_type": 0.7456017770543366
+    },
+    {
+      "pitcher": 605154,
+      "n_pitches": 631,
+      "k_chosen": 4,
+      "bic": -6649.09318791835,
+      "ari_vs_pitch_type": 0.7215891949739526,
+      "nmi_vs_pitch_type": 0.7529826357305435
+    },
+    {
+      "pitcher": 624647,
+      "n_pitches": 494,
+      "k_chosen": 2,
+      "bic": -1153.835347029107,
+      "ari_vs_pitch_type": 0.9260234019371735,
+      "nmi_vs_pitch_type": 0.8759511651058386
+    },
+    {
+      "pitcher": 690986,
+      "n_pitches": 584,
+      "k_chosen": 4,
+      "bic": -5535.9890651657815,
+      "ari_vs_pitch_type": 0.6827076891610707,
+      "nmi_vs_pitch_type": 0.8124109190018993
+    },
+    {
+      "pitcher": 676272,
+      "n_pitches": 1951,
+      "k_chosen": 6,
+      "bic": -32675.488458726122,
+      "ari_vs_pitch_type": 0.711005842076045,
+      "nmi_vs_pitch_type": 0.8149563933674026
+    },
+    {
+      "pitcher": 670280,
+      "n_pitches": 1076,
+      "k_chosen": 3,
+      "bic": -22427.34851778314,
+      "ari_vs_pitch_type": 0.9921733857360554,
+      "nmi_vs_pitch_type": 0.9846922355684913
+    },
+    {
+      "pitcher": 663773,
+      "n_pitches": 1113,
+      "k_chosen": 5,
+      "bic": -15657.731918785885,
+      "ari_vs_pitch_type": 0.6097097729495623,
+      "nmi_vs_pitch_type": 0.7130157519204818
+    },
+    {
+      "pitcher": 664294,
+      "n_pitches": 934,
+      "k_chosen": 4,
+      "bic": -4487.548583299672,
+      "ari_vs_pitch_type": 0.590371680709455,
+      "nmi_vs_pitch_type": 0.7881277897322537
+    },
+    {
+      "pitcher": 623211,
+      "n_pitches": 963,
+      "k_chosen": 4,
+      "bic": -2147.310238659473,
+      "ari_vs_pitch_type": 0.9839893074298872,
+      "nmi_vs_pitch_type": 0.9739911800724456
+    },
+    {
+      "pitcher": 677960,
+      "n_pitches": 1071,
+      "k_chosen": 3,
+      "bic": -12913.673500368537,
+      "ari_vs_pitch_type": 0.9385043719724692,
+      "nmi_vs_pitch_type": 0.9345106191223072
+    },
+    {
+      "pitcher": 674370,
+      "n_pitches": 932,
+      "k_chosen": 5,
+      "bic": -8789.21934182386,
+      "ari_vs_pitch_type": 0.7762297485855453,
+      "nmi_vs_pitch_type": 0.852413740539965
+    },
+    {
+      "pitcher": 656578,
+      "n_pitches": 998,
+      "k_chosen": 5,
+      "bic": -12463.187621440276,
+      "ari_vs_pitch_type": 0.8876110535199023,
+      "nmi_vs_pitch_type": 0.9189284838335848
+    },
+    {
+      "pitcher": 656638,
+      "n_pitches": 1139,
+      "k_chosen": 5,
+      "bic": -9672.820980439108,
+      "ari_vs_pitch_type": 0.8066737164335892,
+      "nmi_vs_pitch_type": 0.8258806346464426
+    },
+    {
+      "pitcher": 663986,
+      "n_pitches": 1099,
+      "k_chosen": 3,
+      "bic": -10652.385302184593,
+      "ari_vs_pitch_type": 0.9960763933351233,
+      "nmi_vs_pitch_type": 0.9911319170103211
+    },
+    {
+      "pitcher": 676684,
+      "n_pitches": 780,
+      "k_chosen": 3,
+      "bic": -8396.00646233006,
+      "ari_vs_pitch_type": 0.9371114894084166,
+      "nmi_vs_pitch_type": 0.9434158305042428
+    },
+    {
+      "pitcher": 660853,
+      "n_pitches": 1018,
+      "k_chosen": 3,
+      "bic": -10345.30165623891,
+      "ari_vs_pitch_type": 0.9972668541417762,
+      "nmi_vs_pitch_type": 0.9928158433833645
+    },
+    {
+      "pitcher": 593958,
+      "n_pitches": 2271,
+      "k_chosen": 5,
+      "bic": -3451.7280916426635,
+      "ari_vs_pitch_type": 0.6845227673283696,
+      "nmi_vs_pitch_type": 0.7629138741014344
+    },
+    {
+      "pitcher": 680704,
+      "n_pitches": 980,
+      "k_chosen": 4,
+      "bic": -12542.008380116727,
+      "ari_vs_pitch_type": 0.9773919951929516,
+      "nmi_vs_pitch_type": 0.9407191724646514
+    },
+    {
+      "pitcher": 608337,
+      "n_pitches": 3173,
+      "k_chosen": 6,
+      "bic": -36646.59147726329,
+      "ari_vs_pitch_type": 0.6676120507039962,
+      "nmi_vs_pitch_type": 0.7916864208904363
+    },
+    {
+      "pitcher": 663462,
+      "n_pitches": 476,
+      "k_chosen": 3,
+      "bic": -3881.699598408982,
+      "ari_vs_pitch_type": 0.8984432998426093,
+      "nmi_vs_pitch_type": 0.8670254783351761
+    },
+    {
+      "pitcher": 642546,
+      "n_pitches": 525,
+      "k_chosen": 4,
+      "bic": -2796.0021276286006,
+      "ari_vs_pitch_type": 0.7645691624020576,
+      "nmi_vs_pitch_type": 0.8204945798148758
+    },
+    {
+      "pitcher": 663423,
+      "n_pitches": 457,
+      "k_chosen": 4,
+      "bic": -7145.757502652777,
+      "ari_vs_pitch_type": 0.8058070950380314,
+      "nmi_vs_pitch_type": 0.8880608803724398
+    },
+    {
+      "pitcher": 527048,
+      "n_pitches": 2209,
+      "k_chosen": 5,
+      "bic": -13293.709511927424,
+      "ari_vs_pitch_type": 0.7068888024899844,
+      "nmi_vs_pitch_type": 0.7915452604710622
+    },
+    {
+      "pitcher": 669923,
+      "n_pitches": 2806,
+      "k_chosen": 6,
+      "bic": -42981.97804051847,
+      "ari_vs_pitch_type": 0.9572019280127592,
+      "nmi_vs_pitch_type": 0.9396402417614589
+    },
+    {
+      "pitcher": 641540,
+      "n_pitches": 2679,
+      "k_chosen": 6,
+      "bic": -23836.858375252166,
+      "ari_vs_pitch_type": 0.782455714421103,
+      "nmi_vs_pitch_type": 0.8576065264795456
+    },
+    {
+      "pitcher": 668970,
+      "n_pitches": 566,
+      "k_chosen": 3,
+      "bic": -3084.9658261691484,
+      "ari_vs_pitch_type": 0.5697265282114804,
+      "nmi_vs_pitch_type": 0.7204014758193621
+    },
+    {
+      "pitcher": 571863,
+      "n_pitches": 560,
+      "k_chosen": 3,
+      "bic": -1847.304754687771,
+      "ari_vs_pitch_type": 0.9932916745064645,
+      "nmi_vs_pitch_type": 0.9871792204225085
+    },
+    {
+      "pitcher": 660896,
+      "n_pitches": 314,
+      "k_chosen": 3,
+      "bic": 179.3564384584556,
+      "ari_vs_pitch_type": 0.8358746019453533,
+      "nmi_vs_pitch_type": 0.8470219372106521
+    },
+    {
+      "pitcher": 641755,
+      "n_pitches": 297,
+      "k_chosen": 2,
+      "bic": 1963.461392423191,
+      "ari_vs_pitch_type": 0.9535828210553348,
+      "nmi_vs_pitch_type": 0.9316234981299649
+    },
+    {
+      "pitcher": 664875,
+      "n_pitches": 1141,
+      "k_chosen": 4,
+      "bic": -12675.496183956744,
+      "ari_vs_pitch_type": 0.522566390277382,
+      "nmi_vs_pitch_type": 0.6743911494739416
+    },
+    {
+      "pitcher": 592779,
+      "n_pitches": 434,
+      "k_chosen": 4,
+      "bic": -2363.3561921762494,
+      "ari_vs_pitch_type": 0.7199256205630014,
+      "nmi_vs_pitch_type": 0.8243285652723223
+    },
+    {
+      "pitcher": 641927,
+      "n_pitches": 2318,
+      "k_chosen": 6,
+      "bic": -32668.013659548822,
+      "ari_vs_pitch_type": 0.5988260901469531,
+      "nmi_vs_pitch_type": 0.7735439187301821
+    },
+    {
+      "pitcher": 656234,
+      "n_pitches": 1366,
+      "k_chosen": 4,
+      "bic": -14091.156783853656,
+      "ari_vs_pitch_type": 0.5861507812182856,
+      "nmi_vs_pitch_type": 0.7726131307459652
+    },
+    {
+      "pitcher": 683232,
+      "n_pitches": 360,
+      "k_chosen": 2,
+      "bic": -2358.192402487781,
+      "ari_vs_pitch_type": 0.8353624811574476,
+      "nmi_vs_pitch_type": 0.8165200684366509
+    },
+    {
+      "pitcher": 657756,
+      "n_pitches": 1550,
+      "k_chosen": 6,
+      "bic": -12160.509537015125,
+      "ari_vs_pitch_type": 0.5823537541337865,
+      "nmi_vs_pitch_type": 0.7342126088254988
+    },
+    {
+      "pitcher": 608718,
+      "n_pitches": 1069,
+      "k_chosen": 4,
+      "bic": -7883.375015879749,
+      "ari_vs_pitch_type": 0.9775554177351382,
+      "nmi_vs_pitch_type": 0.9697545081397574
+    },
+    {
+      "pitcher": 686613,
+      "n_pitches": 2709,
+      "k_chosen": 6,
+      "bic": -37519.710865945664,
+      "ari_vs_pitch_type": 0.7108348294145285,
+      "nmi_vs_pitch_type": 0.8411408605251927
+    },
+    {
+      "pitcher": 669194,
+      "n_pitches": 2349,
+      "k_chosen": 6,
+      "bic": -31075.01604863748,
+      "ari_vs_pitch_type": 0.6151583684583303,
+      "nmi_vs_pitch_type": 0.814939821513362
+    },
+    {
+      "pitcher": 606160,
+      "n_pitches": 1218,
+      "k_chosen": 5,
+      "bic": -5061.140492523061,
+      "ari_vs_pitch_type": 0.9508246371241289,
+      "nmi_vs_pitch_type": 0.9174099350899997
+    },
+    {
+      "pitcher": 666818,
+      "n_pitches": 536,
+      "k_chosen": 4,
+      "bic": -1998.650794858689,
+      "ari_vs_pitch_type": 0.938135609188633,
+      "nmi_vs_pitch_type": 0.908612472593519
+    },
+    {
+      "pitcher": 664299,
+      "n_pitches": 2768,
+      "k_chosen": 4,
+      "bic": -45697.831712654995,
+      "ari_vs_pitch_type": 0.5471219199227735,
+      "nmi_vs_pitch_type": 0.7316882930713291
+    },
+    {
+      "pitcher": 612434,
+      "n_pitches": 999,
+      "k_chosen": 3,
+      "bic": -12175.083735619075,
+      "ari_vs_pitch_type": 0.9244410506848492,
+      "nmi_vs_pitch_type": 0.915986647857278
+    },
+    {
+      "pitcher": 679885,
+      "n_pitches": 234,
+      "k_chosen": 2,
+      "bic": -950.5196512923415,
+      "ari_vs_pitch_type": 0.8389379020531762,
+      "nmi_vs_pitch_type": 0.8289241397627778
+    },
+    {
+      "pitcher": 686826,
+      "n_pitches": 370,
+      "k_chosen": 4,
+      "bic": -5055.528462230554,
+      "ari_vs_pitch_type": 0.9765446744606738,
+      "nmi_vs_pitch_type": 0.9496266347643518
+    },
+    {
+      "pitcher": 669459,
+      "n_pitches": 849,
+      "k_chosen": 3,
+      "bic": -4435.381536246979,
+      "ari_vs_pitch_type": 0.8456508463981648,
+      "nmi_vs_pitch_type": 0.8050988479350554
+    },
+    {
+      "pitcher": 657024,
+      "n_pitches": 1040,
+      "k_chosen": 3,
+      "bic": -9025.86243395647,
+      "ari_vs_pitch_type": 1.0,
+      "nmi_vs_pitch_type": 1.0
+    },
+    {
+      "pitcher": 671737,
+      "n_pitches": 1817,
+      "k_chosen": 4,
+      "bic": -23975.870222984537,
+      "ari_vs_pitch_type": 0.9977753634886146,
+      "nmi_vs_pitch_type": 0.995363876701118
+    },
+    {
+      "pitcher": 687330,
+      "n_pitches": 1053,
+      "k_chosen": 3,
+      "bic": -15875.294160412976,
+      "ari_vs_pitch_type": 0.9943985625072946,
+      "nmi_vs_pitch_type": 0.9784426436462267
+    },
+    {
+      "pitcher": 650893,
+      "n_pitches": 917,
+      "k_chosen": 3,
+      "bic": -9267.959392849361,
+      "ari_vs_pitch_type": 0.7101643553216882,
+      "nmi_vs_pitch_type": 0.8184899516630494
+    },
+    {
+      "pitcher": 670950,
+      "n_pitches": 1348,
+      "k_chosen": 2,
+      "bic": -13737.979192916147,
+      "ari_vs_pitch_type": 0.9883410624519281,
+      "nmi_vs_pitch_type": 0.9788816462702854
+    },
+    {
+      "pitcher": 641835,
+      "n_pitches": 779,
+      "k_chosen": 3,
+      "bic": -3548.4617553527696,
+      "ari_vs_pitch_type": 0.8036307327099346,
+      "nmi_vs_pitch_type": 0.8256317712346515
+    },
+    {
+      "pitcher": 448179,
+      "n_pitches": 2487,
+      "k_chosen": 6,
+      "bic": -53064.65227645842,
+      "ari_vs_pitch_type": 0.825354518467891,
+      "nmi_vs_pitch_type": 0.8155250858477969
+    },
+    {
+      "pitcher": 665620,
+      "n_pitches": 288,
+      "k_chosen": 3,
+      "bic": -3024.598719238362,
+      "ari_vs_pitch_type": 0.8763213739387232,
+      "nmi_vs_pitch_type": 0.822798286389273
+    },
+    {
+      "pitcher": 623352,
+      "n_pitches": 1017,
+      "k_chosen": 4,
+      "bic": -10245.96433761101,
+      "ari_vs_pitch_type": 0.7819486040034679,
+      "nmi_vs_pitch_type": 0.8257028169624012
+    },
+    {
+      "pitcher": 543766,
+      "n_pitches": 767,
+      "k_chosen": 4,
+      "bic": -5621.90944120329,
+      "ari_vs_pitch_type": 0.9842456580762803,
+      "nmi_vs_pitch_type": 0.9673870060509029
+    },
+    {
+      "pitcher": 676680,
+      "n_pitches": 829,
+      "k_chosen": 3,
+      "bic": -12238.50901338468,
+      "ari_vs_pitch_type": 0.9616196017702483,
+      "nmi_vs_pitch_type": 0.916894626905817
+    },
+    {
+      "pitcher": 676979,
+      "n_pitches": 290,
+      "k_chosen": 3,
+      "bic": -2045.8645011115918,
+      "ari_vs_pitch_type": 0.7034945020266751,
+      "nmi_vs_pitch_type": 0.7470350609454303
+    },
+    {
+      "pitcher": 605130,
+      "n_pitches": 1190,
+      "k_chosen": 4,
+      "bic": -14248.581844599943,
+      "ari_vs_pitch_type": 0.8648068793325786,
+      "nmi_vs_pitch_type": 0.8727069545577941
+    },
+    {
+      "pitcher": 670990,
+      "n_pitches": 700,
+      "k_chosen": 3,
+      "bic": -6340.9258165965075,
+      "ari_vs_pitch_type": 0.8396693364693889,
+      "nmi_vs_pitch_type": 0.831075877060769
+    },
+    {
+      "pitcher": 678061,
+      "n_pitches": 426,
+      "k_chosen": 3,
+      "bic": -4260.304938588315,
+      "ari_vs_pitch_type": 0.9532746328805539,
+      "nmi_vs_pitch_type": 0.9250006877004157
+    },
+    {
+      "pitcher": 570632,
+      "n_pitches": 770,
+      "k_chosen": 3,
+      "bic": 68.23238455544788,
+      "ari_vs_pitch_type": 0.7169820785091098,
+      "nmi_vs_pitch_type": 0.8087393950507448
+    },
+    {
+      "pitcher": 658648,
+      "n_pitches": 890,
+      "k_chosen": 4,
+      "bic": -12661.11498632313,
+      "ari_vs_pitch_type": 0.9326029046837163,
+      "nmi_vs_pitch_type": 0.9251650604320862
+    },
+    {
+      "pitcher": 547179,
+      "n_pitches": 2358,
+      "k_chosen": 5,
+      "bic": -24139.023894603295,
+      "ari_vs_pitch_type": 0.8236554843432095,
+      "nmi_vs_pitch_type": 0.8318626578273979
+    },
+    {
+      "pitcher": 641743,
+      "n_pitches": 227,
+      "k_chosen": 3,
+      "bic": -816.567048640246,
+      "ari_vs_pitch_type": 0.8356649669738023,
+      "nmi_vs_pitch_type": 0.857451329407087
+    },
+    {
+      "pitcher": 660593,
+      "n_pitches": 352,
+      "k_chosen": 3,
+      "bic": -1277.212628363181,
+      "ari_vs_pitch_type": 0.6212708815576384,
+      "nmi_vs_pitch_type": 0.7734932000571576
+    },
+    {
+      "pitcher": 642397,
+      "n_pitches": 939,
+      "k_chosen": 3,
+      "bic": -5722.412196107638,
+      "ari_vs_pitch_type": 0.8067447953611423,
+      "nmi_vs_pitch_type": 0.8052210627898845
+    },
+    {
+      "pitcher": 622554,
+      "n_pitches": 850,
+      "k_chosen": 4,
+      "bic": -944.244773204312,
+      "ari_vs_pitch_type": 0.9531924413651236,
+      "nmi_vs_pitch_type": 0.9166804342350088
+    },
+    {
+      "pitcher": 676130,
+      "n_pitches": 731,
+      "k_chosen": 3,
+      "bic": -4141.730187329744,
+      "ari_vs_pitch_type": 0.844743824928502,
+      "nmi_vs_pitch_type": 0.8677080214492887
+    },
+    {
+      "pitcher": 621381,
+      "n_pitches": 1344,
+      "k_chosen": 4,
+      "bic": -13764.834338922916,
+      "ari_vs_pitch_type": 0.6544563972546877,
+      "nmi_vs_pitch_type": 0.7111868628813253
+    },
+    {
+      "pitcher": 640448,
+      "n_pitches": 1077,
+      "k_chosen": 3,
+      "bic": -3035.4539401020593,
+      "ari_vs_pitch_type": 0.9938056812551911,
+      "nmi_vs_pitch_type": 0.9864812557882382
+    },
+    {
+      "pitcher": 543859,
+      "n_pitches": 1279,
+      "k_chosen": 4,
+      "bic": -16100.660255288916,
+      "ari_vs_pitch_type": 0.583824673740704,
+      "nmi_vs_pitch_type": 0.7072122958703654
+    },
+    {
+      "pitcher": 640451,
+      "n_pitches": 947,
+      "k_chosen": 3,
+      "bic": -11979.570919922826,
+      "ari_vs_pitch_type": 0.9579406822399549,
+      "nmi_vs_pitch_type": 0.9323445235779153
+    },
+    {
+      "pitcher": 641729,
+      "n_pitches": 934,
+      "k_chosen": 3,
+      "bic": -12555.897240326834,
+      "ari_vs_pitch_type": 0.9957186317699741,
+      "nmi_vs_pitch_type": 0.9878692478443147
+    },
+    {
+      "pitcher": 543272,
+      "n_pitches": 942,
+      "k_chosen": 2,
+      "bic": -13702.361782520078,
+      "ari_vs_pitch_type": 0.7705732125993993,
+      "nmi_vs_pitch_type": 0.8095989586640534
+    },
+    {
+      "pitcher": 678606,
+      "n_pitches": 554,
+      "k_chosen": 4,
+      "bic": 215.09004517241465,
+      "ari_vs_pitch_type": 0.4319207257856077,
+      "nmi_vs_pitch_type": 0.6154160314930351
+    },
+    {
+      "pitcher": 676265,
+      "n_pitches": 698,
+      "k_chosen": 3,
+      "bic": -8997.06374511208,
+      "ari_vs_pitch_type": 1.0,
+      "nmi_vs_pitch_type": 1.0
+    },
+    {
+      "pitcher": 445926,
+      "n_pitches": 542,
+      "k_chosen": 4,
+      "bic": -3130.568852514907,
+      "ari_vs_pitch_type": 0.9809703235582006,
+      "nmi_vs_pitch_type": 0.9721007736105934
+    },
+    {
+      "pitcher": 689266,
+      "n_pitches": 567,
+      "k_chosen": 5,
+      "bic": -3088.6625201120933,
+      "ari_vs_pitch_type": 0.6547158867237988,
+      "nmi_vs_pitch_type": 0.7664582022166528
+    },
+    {
+      "pitcher": 671131,
+      "n_pitches": 344,
+      "k_chosen": 3,
+      "bic": -3056.7202517823584,
+      "ari_vs_pitch_type": 0.8345188371417056,
+      "nmi_vs_pitch_type": 0.8232870430099466
+    },
+    {
+      "pitcher": 664854,
+      "n_pitches": 580,
+      "k_chosen": 2,
+      "bic": -3732.4423601218186,
+      "ari_vs_pitch_type": 0.8966024381454881,
+      "nmi_vs_pitch_type": 0.8763676290392466
+    },
+    {
+      "pitcher": 667463,
+      "n_pitches": 527,
+      "k_chosen": 3,
+      "bic": -3176.6865074792986,
+      "ari_vs_pitch_type": 0.991627710107419,
+      "nmi_vs_pitch_type": 0.9876115974930895
+    },
+    {
+      "pitcher": 571945,
+      "n_pitches": 3087,
+      "k_chosen": 6,
+      "bic": -46696.28037758706,
+      "ari_vs_pitch_type": 0.9520016124312572,
+      "nmi_vs_pitch_type": 0.9373504487089545
+    },
+    {
+      "pitcher": 622065,
+      "n_pitches": 850,
+      "k_chosen": 4,
+      "bic": -5526.864535624966,
+      "ari_vs_pitch_type": 0.8670127862449443,
+      "nmi_vs_pitch_type": 0.885271646319912
+    },
+    {
+      "pitcher": 668881,
+      "n_pitches": 1996,
+      "k_chosen": 4,
+      "bic": -21982.80985033155,
+      "ari_vs_pitch_type": 0.8291492309884466,
+      "nmi_vs_pitch_type": 0.8418469265107733
+    },
+    {
+      "pitcher": 663704,
+      "n_pitches": 338,
+      "k_chosen": 3,
+      "bic": -4164.107189951785,
+      "ari_vs_pitch_type": 0.9558211349125144,
+      "nmi_vs_pitch_type": 0.9373543035445829
+    },
+    {
+      "pitcher": 669711,
+      "n_pitches": 345,
+      "k_chosen": 4,
+      "bic": -4244.330517657461,
+      "ari_vs_pitch_type": 0.888455021397693,
+      "nmi_vs_pitch_type": 0.9088143954038824
+    },
+    {
+      "pitcher": 666745,
+      "n_pitches": 1438,
+      "k_chosen": 3,
+      "bic": -17509.784966985004,
+      "ari_vs_pitch_type": 0.6882061592488301,
+      "nmi_vs_pitch_type": 0.8023057723585385
+    },
+    {
+      "pitcher": 672578,
+      "n_pitches": 1217,
+      "k_chosen": 5,
+      "bic": -11959.117151940683,
+      "ari_vs_pitch_type": 0.7685312838864442,
+      "nmi_vs_pitch_type": 0.8587054608950259
+    },
+    {
+      "pitcher": 664199,
+      "n_pitches": 1060,
+      "k_chosen": 4,
+      "bic": -10112.80356371918,
+      "ari_vs_pitch_type": 0.9934214990868245,
+      "nmi_vs_pitch_type": 0.9892123183362936
+    },
+    {
+      "pitcher": 425844,
+      "n_pitches": 2127,
+      "k_chosen": 6,
+      "bic": -26615.31332007149,
+      "ari_vs_pitch_type": 0.9603170527336917,
+      "nmi_vs_pitch_type": 0.9504995272245839
+    },
+    {
+      "pitcher": 650633,
+      "n_pitches": 1667,
+      "k_chosen": 6,
+      "bic": -22148.613657446233,
+      "ari_vs_pitch_type": 0.8492350691579367,
+      "nmi_vs_pitch_type": 0.8865442017796669
+    },
+    {
+      "pitcher": 622098,
+      "n_pitches": 1059,
+      "k_chosen": 5,
+      "bic": -13974.009348306106,
+      "ari_vs_pitch_type": 0.6246498809707958,
+      "nmi_vs_pitch_type": 0.8239463505150698
+    },
+    {
+      "pitcher": 650911,
+      "n_pitches": 1452,
+      "k_chosen": 3,
+      "bic": -16067.343692021113,
+      "ari_vs_pitch_type": 0.9939397959543979,
+      "nmi_vs_pitch_type": 0.9888582893760812
+    },
+    {
+      "pitcher": 657585,
+      "n_pitches": 346,
+      "k_chosen": 2,
+      "bic": -677.3441558614222,
+      "ari_vs_pitch_type": 0.4377660390892395,
+      "nmi_vs_pitch_type": 0.6004348065238756
+    },
+    {
+      "pitcher": 518886,
+      "n_pitches": 1116,
+      "k_chosen": 2,
+      "bic": -19520.581875792566,
+      "ari_vs_pitch_type": 0.987322327751981,
+      "nmi_vs_pitch_type": 0.9661990114184531
+    },
+    {
+      "pitcher": 621237,
+      "n_pitches": 742,
+      "k_chosen": 2,
+      "bic": -856.348257483424,
+      "ari_vs_pitch_type": 0.9874224429792287,
+      "nmi_vs_pitch_type": 0.9778829758666783
+    },
+    {
+      "pitcher": 641360,
+      "n_pitches": 1202,
+      "k_chosen": 4,
+      "bic": -10555.018058369,
+      "ari_vs_pitch_type": 0.5209708758092823,
+      "nmi_vs_pitch_type": 0.7314116361915551
+    },
+    {
+      "pitcher": 656546,
+      "n_pitches": 867,
+      "k_chosen": 4,
+      "bic": -10151.959157294023,
+      "ari_vs_pitch_type": 0.6700348329703615,
+      "nmi_vs_pitch_type": 0.8106740338459723
+    },
+    {
+      "pitcher": 500779,
+      "n_pitches": 1227,
+      "k_chosen": 4,
+      "bic": -17442.249019538467,
+      "ari_vs_pitch_type": 0.9203130527912532,
+      "nmi_vs_pitch_type": 0.9225855822856005
+    },
+    {
+      "pitcher": 606965,
+      "n_pitches": 671,
+      "k_chosen": 4,
+      "bic": -6480.91129196759,
+      "ari_vs_pitch_type": 0.7828531323730227,
+      "nmi_vs_pitch_type": 0.8427323566988906
+    },
+    {
+      "pitcher": 663855,
+      "n_pitches": 1053,
+      "k_chosen": 5,
+      "bic": -10309.765646692107,
+      "ari_vs_pitch_type": 0.5619435288697432,
+      "nmi_vs_pitch_type": 0.7787436388711874
+    },
+    {
+      "pitcher": 664126,
+      "n_pitches": 717,
+      "k_chosen": 3,
+      "bic": -9615.692735784793,
+      "ari_vs_pitch_type": 0.8935727386653561,
+      "nmi_vs_pitch_type": 0.8736247817621089
+    },
+    {
+      "pitcher": 605447,
+      "n_pitches": 899,
+      "k_chosen": 2,
+      "bic": -8583.831119020459,
+      "ari_vs_pitch_type": 1.0,
+      "nmi_vs_pitch_type": 1.0
+    },
+    {
+      "pitcher": 596112,
+      "n_pitches": 758,
+      "k_chosen": 4,
+      "bic": -6391.601425981886,
+      "ari_vs_pitch_type": 0.9089577502313846,
+      "nmi_vs_pitch_type": 0.9084364267228376
+    },
+    {
+      "pitcher": 554340,
+      "n_pitches": 1067,
+      "k_chosen": 6,
+      "bic": -9925.143340070636,
+      "ari_vs_pitch_type": 0.6849460657161306,
+      "nmi_vs_pitch_type": 0.7898832427137022
+    },
+    {
+      "pitcher": 518617,
+      "n_pitches": 955,
+      "k_chosen": 6,
+      "bic": -7252.495182399959,
+      "ari_vs_pitch_type": 0.48180754250709984,
+      "nmi_vs_pitch_type": 0.6625961477990254
+    },
+    {
+      "pitcher": 681867,
+      "n_pitches": 548,
+      "k_chosen": 4,
+      "bic": -5130.049828300251,
+      "ari_vs_pitch_type": 0.9237276812879421,
+      "nmi_vs_pitch_type": 0.9334031368262181
+    },
+    {
+      "pitcher": 547943,
+      "n_pitches": 829,
+      "k_chosen": 4,
+      "bic": -14309.317280866631,
+      "ari_vs_pitch_type": 0.7832144669380406,
+      "nmi_vs_pitch_type": 0.8872084155383839
+    },
+    {
+      "pitcher": 542888,
+      "n_pitches": 793,
+      "k_chosen": 4,
+      "bic": -2585.595488181755,
+      "ari_vs_pitch_type": 0.9967453418981398,
+      "nmi_vs_pitch_type": 0.9936160093531611
+    },
+    {
+      "pitcher": 666808,
+      "n_pitches": 1118,
+      "k_chosen": 3,
+      "bic": -4894.748374320617,
+      "ari_vs_pitch_type": 0.9756545933780008,
+      "nmi_vs_pitch_type": 0.9578785218949015
+    },
+    {
+      "pitcher": 657571,
+      "n_pitches": 1037,
+      "k_chosen": 2,
+      "bic": -11680.026045342227,
+      "ari_vs_pitch_type": 0.9593727189551352,
+      "nmi_vs_pitch_type": 0.9113797326460011
+    },
+    {
+      "pitcher": 643511,
+      "n_pitches": 1092,
+      "k_chosen": 4,
+      "bic": -11216.39776869549,
+      "ari_vs_pitch_type": 0.7167233532738417,
+      "nmi_vs_pitch_type": 0.7370950796645623
+    },
+    {
+      "pitcher": 675627,
+      "n_pitches": 1142,
+      "k_chosen": 4,
+      "bic": -12051.62072955205,
+      "ari_vs_pitch_type": 0.8894637370266937,
+      "nmi_vs_pitch_type": 0.8748402044007186
+    },
+    {
+      "pitcher": 676254,
+      "n_pitches": 1063,
+      "k_chosen": 4,
+      "bic": -10096.840880976015,
+      "ari_vs_pitch_type": 0.6104266749140934,
+      "nmi_vs_pitch_type": 0.6976077422002842
+    },
+    {
+      "pitcher": 477132,
+      "n_pitches": 2011,
+      "k_chosen": 6,
+      "bic": -22674.673110258165,
+      "ari_vs_pitch_type": 0.7718341369524511,
+      "nmi_vs_pitch_type": 0.8512114643713767
+    },
+    {
+      "pitcher": 663941,
+      "n_pitches": 1283,
+      "k_chosen": 5,
+      "bic": -12525.491781983215,
+      "ari_vs_pitch_type": 0.9557917030043813,
+      "nmi_vs_pitch_type": 0.9251907558143019
+    },
+    {
+      "pitcher": 675540,
+      "n_pitches": 1493,
+      "k_chosen": 5,
+      "bic": -19304.72580016236,
+      "ari_vs_pitch_type": 0.8488454723364698,
+      "nmi_vs_pitch_type": 0.8683603422868533
+    },
+    {
+      "pitcher": 607755,
+      "n_pitches": 821,
+      "k_chosen": 5,
+      "bic": -8627.77130438506,
+      "ari_vs_pitch_type": 0.4052465906758195,
+      "nmi_vs_pitch_type": 0.6629346250553511
+    },
+    {
+      "pitcher": 675916,
+      "n_pitches": 706,
+      "k_chosen": 2,
+      "bic": -6597.829981119859,
+      "ari_vs_pitch_type": 0.9968655454394618,
+      "nmi_vs_pitch_type": 0.9928721534796284
+    },
+    {
+      "pitcher": 663947,
+      "n_pitches": 1190,
+      "k_chosen": 5,
+      "bic": -10921.320732057993,
+      "ari_vs_pitch_type": 0.9605715470593085,
+      "nmi_vs_pitch_type": 0.9589425805658028
+    },
+    {
+      "pitcher": 669212,
+      "n_pitches": 1166,
+      "k_chosen": 3,
+      "bic": -13395.068474518008,
+      "ari_vs_pitch_type": 0.9703131942340742,
+      "nmi_vs_pitch_type": 0.9618995801044873
+    },
+    {
+      "pitcher": 689225,
+      "n_pitches": 624,
+      "k_chosen": 3,
+      "bic": -2237.2656380006692,
+      "ari_vs_pitch_type": 0.6576627082449666,
+      "nmi_vs_pitch_type": 0.8085751537594442
+    },
+    {
+      "pitcher": 663474,
+      "n_pitches": 300,
+      "k_chosen": 3,
+      "bic": -2238.3786861777726,
+      "ari_vs_pitch_type": 1.0,
+      "nmi_vs_pitch_type": 1.0
+    },
+    {
+      "pitcher": 622766,
+      "n_pitches": 208,
+      "k_chosen": 3,
+      "bic": -214.86466704074155,
+      "ari_vs_pitch_type": 0.7136199305926193,
+      "nmi_vs_pitch_type": 0.841479263276552
+    },
+    {
+      "pitcher": 656945,
+      "n_pitches": 1186,
+      "k_chosen": 2,
+      "bic": -10234.033079587449,
+      "ari_vs_pitch_type": 0.9983919290805655,
+      "nmi_vs_pitch_type": 0.9955502689255391
+    },
+    {
+      "pitcher": 675989,
+      "n_pitches": 450,
+      "k_chosen": 3,
+      "bic": -4976.274051521411,
+      "ari_vs_pitch_type": 0.9784206570613595,
+      "nmi_vs_pitch_type": 0.96895185316361
+    },
+    {
+      "pitcher": 677053,
+      "n_pitches": 951,
+      "k_chosen": 3,
+      "bic": -11640.623654492761,
+      "ari_vs_pitch_type": 0.8760510388523023,
+      "nmi_vs_pitch_type": 0.8664516758815087
+    },
+    {
+      "pitcher": 669796,
+      "n_pitches": 858,
+      "k_chosen": 4,
+      "bic": -8410.390052637782,
+      "ari_vs_pitch_type": 0.6894344637048471,
+      "nmi_vs_pitch_type": 0.8347350441905338
+    },
+    {
+      "pitcher": 519043,
+      "n_pitches": 821,
+      "k_chosen": 3,
+      "bic": -8813.087843086363,
+      "ari_vs_pitch_type": 0.997491390940297,
+      "nmi_vs_pitch_type": 0.995932266140001
+    },
+    {
+      "pitcher": 502085,
+      "n_pitches": 1047,
+      "k_chosen": 5,
+      "bic": -5742.95083849458,
+      "ari_vs_pitch_type": 0.6672533019770792,
+      "nmi_vs_pitch_type": 0.674335793298428
+    },
+    {
+      "pitcher": 682990,
+      "n_pitches": 857,
+      "k_chosen": 6,
+      "bic": -7001.981796588646,
+      "ari_vs_pitch_type": 0.9025708427424852,
+      "nmi_vs_pitch_type": 0.8982003881598118
+    },
+    {
+      "pitcher": 640462,
+      "n_pitches": 933,
+      "k_chosen": 4,
+      "bic": -11512.631976679855,
+      "ari_vs_pitch_type": 0.8640154437355817,
+      "nmi_vs_pitch_type": 0.797945550169153
+    },
+    {
+      "pitcher": 666277,
+      "n_pitches": 860,
+      "k_chosen": 3,
+      "bic": -10575.997248897227,
+      "ari_vs_pitch_type": 0.9968586523979234,
+      "nmi_vs_pitch_type": 0.9928556465456427
+    },
+    {
+      "pitcher": 595345,
+      "n_pitches": 1012,
+      "k_chosen": 3,
+      "bic": -12744.260310228137,
+      "ari_vs_pitch_type": 0.698762372703889,
+      "nmi_vs_pitch_type": 0.7827594761290498
+    },
+    {
+      "pitcher": 608638,
+      "n_pitches": 682,
+      "k_chosen": 4,
+      "bic": -6513.847271361112,
+      "ari_vs_pitch_type": 0.7370568942321043,
+      "nmi_vs_pitch_type": 0.7444488674291769
+    },
+    {
+      "pitcher": 657097,
+      "n_pitches": 918,
+      "k_chosen": 3,
+      "bic": -13125.993604098501,
+      "ari_vs_pitch_type": 0.9857169633817643,
+      "nmi_vs_pitch_type": 0.9773469075314777
+    },
+    {
+      "pitcher": 661440,
+      "n_pitches": 617,
+      "k_chosen": 3,
+      "bic": -6756.878457624758,
+      "ari_vs_pitch_type": 0.9270682874310413,
+      "nmi_vs_pitch_type": 0.8962500501153433
+    },
+    {
+      "pitcher": 656427,
+      "n_pitches": 2621,
+      "k_chosen": 6,
+      "bic": -29897.534362811897,
+      "ari_vs_pitch_type": 0.8533848624235321,
+      "nmi_vs_pitch_type": 0.8291589379132375
+    },
+    {
+      "pitcher": 670174,
+      "n_pitches": 1362,
+      "k_chosen": 5,
+      "bic": -10529.457015813641,
+      "ari_vs_pitch_type": 0.737612633049852,
+      "nmi_vs_pitch_type": 0.7552326718975058
+    },
+    {
+      "pitcher": 669145,
+      "n_pitches": 212,
+      "k_chosen": 4,
+      "bic": 767.9216419557029,
+      "ari_vs_pitch_type": 0.7903832093466342,
+      "nmi_vs_pitch_type": 0.8460575205704286
+    },
+    {
+      "pitcher": 676710,
+      "n_pitches": 2087,
+      "k_chosen": 6,
+      "bic": -28139.13925366272,
+      "ari_vs_pitch_type": 0.7573694895288714,
+      "nmi_vs_pitch_type": 0.8764368328238544
+    },
+    {
+      "pitcher": 502043,
+      "n_pitches": 2950,
+      "k_chosen": 6,
+      "bic": -32401.86171847354,
+      "ari_vs_pitch_type": 0.8267651734207478,
+      "nmi_vs_pitch_type": 0.8979140284526009
+    },
+    {
+      "pitcher": 493603,
+      "n_pitches": 1011,
+      "k_chosen": 5,
+      "bic": -7739.7982520137575,
+      "ari_vs_pitch_type": 0.7885044086831652,
+      "nmi_vs_pitch_type": 0.8646787790026321
+    },
+    {
+      "pitcher": 656814,
+      "n_pitches": 299,
+      "k_chosen": 2,
+      "bic": -2347.63027312701,
+      "ari_vs_pitch_type": 0.5379370037159965,
+      "nmi_vs_pitch_type": 0.6321489985293313
+    },
+    {
+      "pitcher": 548384,
+      "n_pitches": 951,
+      "k_chosen": 4,
+      "bic": -4964.813370026893,
+      "ari_vs_pitch_type": 0.9883746220989655,
+      "nmi_vs_pitch_type": 0.9827728013964614
+    },
+    {
+      "pitcher": 656731,
+      "n_pitches": 2227,
+      "k_chosen": 6,
+      "bic": -25085.47119459899,
+      "ari_vs_pitch_type": 0.5240689005610366,
+      "nmi_vs_pitch_type": 0.7690343374592653
+    },
+    {
+      "pitcher": 592836,
+      "n_pitches": 2815,
+      "k_chosen": 6,
+      "bic": -26489.90243927455,
+      "ari_vs_pitch_type": 0.6005094991066836,
+      "nmi_vs_pitch_type": 0.7841012343434953
+    },
+    {
+      "pitcher": 605280,
+      "n_pitches": 1019,
+      "k_chosen": 5,
+      "bic": -8019.372525653788,
+      "ari_vs_pitch_type": 0.44923324497576955,
+      "nmi_vs_pitch_type": 0.6853436503730003
+    },
+    {
+      "pitcher": 672582,
+      "n_pitches": 703,
+      "k_chosen": 4,
+      "bic": -5477.987215135177,
+      "ari_vs_pitch_type": 0.9760800778245238,
+      "nmi_vs_pitch_type": 0.9668432100207326
+    },
+    {
+      "pitcher": 641656,
+      "n_pitches": 967,
+      "k_chosen": 4,
+      "bic": -5377.933984643638,
+      "ari_vs_pitch_type": 0.7009546140911199,
+      "nmi_vs_pitch_type": 0.8308090126761162
+    },
+    {
+      "pitcher": 676092,
+      "n_pitches": 366,
+      "k_chosen": 3,
+      "bic": -1178.2789175093276,
+      "ari_vs_pitch_type": 0.5730778131091379,
+      "nmi_vs_pitch_type": 0.5677826682800052
+    },
+    {
+      "pitcher": 679525,
+      "n_pitches": 1333,
+      "k_chosen": 5,
+      "bic": -13834.36940485478,
+      "ari_vs_pitch_type": 0.8671905148560742,
+      "nmi_vs_pitch_type": 0.8786962823067928
+    },
+    {
+      "pitcher": 657376,
+      "n_pitches": 2693,
+      "k_chosen": 6,
+      "bic": -25318.863588980326,
+      "ari_vs_pitch_type": 0.8110221779928488,
+      "nmi_vs_pitch_type": 0.8575720293338907
+    },
+    {
+      "pitcher": 674444,
+      "n_pitches": 243,
+      "k_chosen": 2,
+      "bic": -207.55769416452517,
+      "ari_vs_pitch_type": 0.5205463839860253,
+      "nmi_vs_pitch_type": 0.6352527237056813
+    },
+    {
+      "pitcher": 472610,
+      "n_pitches": 978,
+      "k_chosen": 5,
+      "bic": -12953.892380281875,
+      "ari_vs_pitch_type": 0.6966500816153348,
+      "nmi_vs_pitch_type": 0.7496320371163547
+    },
+    {
+      "pitcher": 672715,
+      "n_pitches": 383,
+      "k_chosen": 3,
+      "bic": -1449.1575084101592,
+      "ari_vs_pitch_type": 0.6200785017614652,
+      "nmi_vs_pitch_type": 0.7952376284883
+    },
+    {
+      "pitcher": 608379,
+      "n_pitches": 2215,
+      "k_chosen": 6,
+      "bic": -29578.679754238805,
+      "ari_vs_pitch_type": 0.810759091608995,
+      "nmi_vs_pitch_type": 0.8942737369422227
+    },
+    {
+      "pitcher": 671111,
+      "n_pitches": 379,
+      "k_chosen": 3,
+      "bic": -3065.287048901106,
+      "ari_vs_pitch_type": 0.9457364805149815,
+      "nmi_vs_pitch_type": 0.9188702606320777
+    },
+    {
+      "pitcher": 621383,
+      "n_pitches": 1002,
+      "k_chosen": 6,
+      "bic": -6764.196052438252,
+      "ari_vs_pitch_type": 0.7965864339346832,
+      "nmi_vs_pitch_type": 0.8593252347611652
+    },
+    {
+      "pitcher": 605182,
+      "n_pitches": 2089,
+      "k_chosen": 6,
+      "bic": -33800.618868481855,
+      "ari_vs_pitch_type": 0.8502862112973905,
+      "nmi_vs_pitch_type": 0.8878317889383976
+    },
+    {
+      "pitcher": 592791,
+      "n_pitches": 2522,
+      "k_chosen": 6,
+      "bic": -33851.007073813984,
+      "ari_vs_pitch_type": 0.7337642514367926,
+      "nmi_vs_pitch_type": 0.8244668048419861
+    },
+    {
+      "pitcher": 642207,
+      "n_pitches": 946,
+      "k_chosen": 4,
+      "bic": -11755.188111689917,
+      "ari_vs_pitch_type": 0.676607030045782,
+      "nmi_vs_pitch_type": 0.7769148747088023
+    },
+    {
+      "pitcher": 606303,
+      "n_pitches": 1112,
+      "k_chosen": 3,
+      "bic": -14603.43037769791,
+      "ari_vs_pitch_type": 0.7862594936716243,
+      "nmi_vs_pitch_type": 0.8466863324126137
+    },
+    {
+      "pitcher": 571948,
+      "n_pitches": 996,
+      "k_chosen": 6,
+      "bic": -6966.711419519044,
+      "ari_vs_pitch_type": 0.7618723435863058,
+      "nmi_vs_pitch_type": 0.8391348542986502
+    },
+    {
+      "pitcher": 682842,
+      "n_pitches": 516,
+      "k_chosen": 2,
+      "bic": -3395.0095953416,
+      "ari_vs_pitch_type": 0.8596631599073812,
+      "nmi_vs_pitch_type": 0.865994690752518
+    },
+    {
+      "pitcher": 665871,
+      "n_pitches": 1702,
+      "k_chosen": 6,
+      "bic": -15687.322753203702,
+      "ari_vs_pitch_type": 0.9435727671043137,
+      "nmi_vs_pitch_type": 0.9115087104008633
+    },
+    {
+      "pitcher": 656730,
+      "n_pitches": 598,
+      "k_chosen": 2,
+      "bic": -8637.139863380018,
+      "ari_vs_pitch_type": 1.0,
+      "nmi_vs_pitch_type": 1.0
+    },
+    {
+      "pitcher": 669713,
+      "n_pitches": 1449,
+      "k_chosen": 6,
+      "bic": -13715.009301937527,
+      "ari_vs_pitch_type": 0.7609871175317604,
+      "nmi_vs_pitch_type": 0.837445889016575
+    },
+    {
+      "pitcher": 641778,
+      "n_pitches": 842,
+      "k_chosen": 4,
+      "bic": -5038.6397090579485,
+      "ari_vs_pitch_type": 0.92160078255647,
+      "nmi_vs_pitch_type": 0.8662591862784619
+    },
+    {
+      "pitcher": 696136,
+      "n_pitches": 583,
+      "k_chosen": 5,
+      "bic": -5663.415578083424,
+      "ari_vs_pitch_type": 0.7806261610834885,
+      "nmi_vs_pitch_type": 0.8584439739585346
+    },
+    {
+      "pitcher": 596271,
+      "n_pitches": 444,
+      "k_chosen": 3,
+      "bic": -2695.190444888463,
+      "ari_vs_pitch_type": 0.5984848710864127,
+      "nmi_vs_pitch_type": 0.7637649636184146
+    },
+    {
+      "pitcher": 664747,
+      "n_pitches": 1151,
+      "k_chosen": 2,
+      "bic": -6223.304583350995,
+      "ari_vs_pitch_type": 0.9949503229837405,
+      "nmi_vs_pitch_type": 0.9884225137203225
+    },
+    {
+      "pitcher": 664139,
+      "n_pitches": 1192,
+      "k_chosen": 4,
+      "bic": -9655.417876358268,
+      "ari_vs_pitch_type": 0.9756478004651623,
+      "nmi_vs_pitch_type": 0.9622032005228718
+    },
+    {
+      "pitcher": 608371,
+      "n_pitches": 1046,
+      "k_chosen": 4,
+      "bic": -12103.403660713551,
+      "ari_vs_pitch_type": 0.8106346955722866,
+      "nmi_vs_pitch_type": 0.786530179019056
+    },
+    {
+      "pitcher": 669461,
+      "n_pitches": 997,
+      "k_chosen": 4,
+      "bic": -17194.05461178293,
+      "ari_vs_pitch_type": 0.6533019251867122,
+      "nmi_vs_pitch_type": 0.7796710091229534
+    }
+  ]
+}

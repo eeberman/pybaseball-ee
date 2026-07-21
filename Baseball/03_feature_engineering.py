@@ -257,6 +257,85 @@ if all(c in df_fe.columns for c in ["ax", "ay", "az"]):
     ).astype("float32")
     print(f"  accel_magnitude: computed for {df_fe['accel_magnitude'].notna().sum()} rows")
 
+# %%
+# === TUNNEL DISTANCE (pitch sequencing) ===
+# Distance between this pitch and the previous pitch (same pitcher, same at-bat)
+# at the "tunnel point" ~23.8 ft from the plate, where the batter must commit.
+# NaN for the first pitch by a pitcher in an at-bat (no prior pitch to tunnel from);
+# these NaNs are structural and deliberately NOT median-imputed downstream —
+# XGBoost's native missing handling deals with them better than a fabricated median.
+
+TUNNEL_DISTANCE_FROM_PLATE_FT = 23.8
+
+TUNNEL_REQ_COLS = [
+    "release_pos_x", "release_pos_y", "release_pos_z",
+    "vx0", "vy0", "vz0", "ax", "ay", "az",
+    "game_pk", "at_bat_number", "pitch_number", "pitcher",
+]
+if all(c in df_fe.columns for c in TUNNEL_REQ_COLS):
+    print("\n=== COMPUTING TUNNEL DISTANCE ===")
+
+    # Plain float64 (nullable Float64/pd.NA breaks boolean masks in np.where)
+    phys = {
+        c: pd.to_numeric(df_fe[c], errors="coerce").astype("float64")
+        for c in ["release_pos_x", "release_pos_y", "release_pos_z",
+                  "vx0", "vy0", "vz0", "ax", "ay", "az"]
+    }
+
+    # Time to reach the tunnel point: solve 0.5*ay*t^2 + vy0*t + dy = 0 where
+    # dy = release_pos_y - tunnel_y. Quadratic (not the linear time_to_plate
+    # shortcut) because the dropped ay term differs systematically by pitch
+    # type, which would bias exactly the fastball/breaking-ball comparisons
+    # this feature is meant to capture. Note: vy0/ay are measured at y=50ft,
+    # not at release — a pre-existing approximation shared with time_to_plate
+    # that largely cancels when differencing two pitches from the same pitcher.
+    dy = phys["release_pos_y"] - TUNNEL_DISTANCE_FROM_PLATE_FT
+    a = 0.5 * phys["ay"]
+    b = phys["vy0"]  # negative (toward plate)
+    disc = b**2 - 4.0 * a * dy
+    with np.errstate(invalid="ignore", divide="ignore"):
+        t_quad = (-b - np.sqrt(disc)) / (2.0 * a)
+    t_linear = dy / phys["vy0"].abs()
+    t_tunnel = pd.Series(
+        np.where((disc > 0) & (t_quad > 0), t_quad, t_linear),
+        index=df_fe.index,
+    )
+
+    x_tunnel = phys["release_pos_x"] + phys["vx0"] * t_tunnel + 0.5 * phys["ax"] * t_tunnel**2
+    z_tunnel = phys["release_pos_z"] + phys["vz0"] * t_tunnel + 0.5 * phys["az"] * t_tunnel**2
+
+    # Previous pitch's tunnel position (same pitcher within the at-bat) via a
+    # sorted copy, mapped back by index so df_fe's row order is untouched.
+    tun = pd.DataFrame({
+        "game_pk": df_fe["game_pk"],
+        "at_bat_number": df_fe["at_bat_number"],
+        "pitcher": df_fe["pitcher"],
+        "pitch_number": df_fe["pitch_number"],
+        "x_tunnel": x_tunnel,
+        "z_tunnel": z_tunnel,
+    })
+    tun_sorted = tun.sort_values(["game_pk", "at_bat_number", "pitcher", "pitch_number"])
+    grp = tun_sorted.groupby(["game_pk", "at_bat_number", "pitcher"], sort=False)
+    x_prev = grp["x_tunnel"].shift(1).reindex(df_fe.index)
+    z_prev = grp["z_tunnel"].shift(1).reindex(df_fe.index)
+
+    df_fe["tunnel_distance"] = np.sqrt(
+        (x_tunnel - x_prev)**2 + (z_tunnel - z_prev)**2
+    ).astype("float32")
+    df_fe["is_first_pitch_for_pitcher_in_ab"] = x_prev.isna().astype("int8")
+
+    n_valid = df_fe["tunnel_distance"].notna().sum()
+    n_first = df_fe["is_first_pitch_for_pitcher_in_ab"].sum()
+    print(f"  tunnel_distance: computed for {n_valid} rows ({n_valid/len(df_fe)*100:.1f}%)")
+    print(f"  first pitch (no prior pitch) rows: {n_first} ({n_first/len(df_fe)*100:.1f}%)")
+    print(f"  tunnel_distance median: {df_fe['tunnel_distance'].median():.3f} ft")
+
+    del tun, tun_sorted, grp, phys
+else:
+    missing = [c for c in TUNNEL_REQ_COLS if c not in df_fe.columns]
+    print(f"\nSkipping tunnel distance (missing columns: {missing})")
+
+# %%
 # Deviation from cluster mean (how unusual is this pitch for its cluster?)
 if "cluster_mean_velocity" in df_fe.columns:
     df_fe["velocity_vs_cluster"] = (
@@ -372,6 +451,9 @@ OPTIONAL_FINAL = [
     "approach_angle_z",
     "approach_angle_x",
     "accel_magnitude",
+    # Pitch sequencing (tunnel_distance NaN on first pitch by pitcher in AB — structural, not imputed)
+    "tunnel_distance",
+    "is_first_pitch_for_pitcher_in_ab",
     # Deviation from cluster mean
     "velocity_vs_cluster",
     "spin_vs_cluster",

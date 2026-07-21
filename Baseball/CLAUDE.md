@@ -574,10 +574,13 @@ Based on OOZ analysis, the model handles OOZ breaking balls well (calibrated, fi
    - Historical matchup stats
    - Pitch sequence patterns
 
-3. **Pitch sequencing features**:
-   - Previous pitch type/location
-   - Velocity differential from previous pitch
-   - Tunnel distance from previous pitch
+3. **Pitch sequencing features** (partially implemented):
+   - Previous pitch type/location (not yet implemented)
+   - Velocity differential from previous pitch (not yet implemented)
+   - ~~Tunnel distance from previous pitch~~ — **IMPLEMENTED** in `03_feature_engineering.py` (mirrored in `08_playoff_comparison.py`):
+     - `tunnel_distance`: Euclidean (x, z) distance between this pitch and the previous pitch by the *same pitcher in the same at-bat* at the tunnel point, 23.8 ft from the plate (~batter's swing-decision point). Time to tunnel solved via full quadratic kinematics (`0.5*ay*t^2 + vy0*t + dy = 0`, linear fallback on invalid discriminant); (x, z) via full kinematics from `release_pos_*`, `v*0`, `a*`.
+     - Grouped by `[game_pk, at_bat_number, pitcher]` sorted by `pitch_number` (pitcher in the key guards against mid-AB pitching changes).
+     - NaN on the first pitch by a pitcher in an AB (~25% of rows) — structural, deliberately **not** median-imputed in `04`/`08` (XGBoost native missing handling is preferred over a fabricated median); companion flag `is_first_pitch_for_pitcher_in_ab` (int8) marks these rows.
 
 ### Architecture Considerations
 - **In-zone model**: Optimize for recall (rare event), consider separate model

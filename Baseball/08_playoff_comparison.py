@@ -336,6 +336,53 @@ if "release_pos_y" in df.columns:
 if all(c in df.columns for c in ["ax", "ay", "az"]):
     df["accel_magnitude"] = np.sqrt(df["ax"]**2 + df["ay"]**2 + df["az"]**2).astype("float32")
 
+# --- Tunnel distance (mirrors 03_feature_engineering.py) ---
+# Distance from the previous pitch (same pitcher, same at-bat) at the tunnel
+# point ~23.8 ft from the plate. NaN on first pitch by a pitcher in an AB —
+# structural, left un-imputed for XGBoost's native missing handling.
+TUNNEL_DISTANCE_FROM_PLATE_FT = 23.8
+TUNNEL_REQ_COLS = [
+    "release_pos_x", "release_pos_y", "release_pos_z",
+    "vx0", "vy0", "vz0", "ax", "ay", "az",
+    "game_pk", "at_bat_number", "pitch_number", "pitcher",
+]
+if all(c in df.columns for c in TUNNEL_REQ_COLS):
+    # Plain float64 (nullable Float64/pd.NA breaks boolean masks in np.where)
+    phys = {
+        c: pd.to_numeric(df[c], errors="coerce").astype("float64")
+        for c in ["release_pos_x", "release_pos_y", "release_pos_z",
+                  "vx0", "vy0", "vz0", "ax", "ay", "az"]
+    }
+    dy = phys["release_pos_y"] - TUNNEL_DISTANCE_FROM_PLATE_FT
+    a = 0.5 * phys["ay"]
+    b = phys["vy0"]
+    disc = b**2 - 4.0 * a * dy
+    with np.errstate(invalid="ignore", divide="ignore"):
+        t_quad = (-b - np.sqrt(disc)) / (2.0 * a)
+    t_linear = dy / phys["vy0"].abs()
+    t_tunnel = pd.Series(np.where((disc > 0) & (t_quad > 0), t_quad, t_linear), index=df.index)
+
+    x_tunnel = phys["release_pos_x"] + phys["vx0"] * t_tunnel + 0.5 * phys["ax"] * t_tunnel**2
+    z_tunnel = phys["release_pos_z"] + phys["vz0"] * t_tunnel + 0.5 * phys["az"] * t_tunnel**2
+
+    tun = pd.DataFrame({
+        "game_pk": df["game_pk"],
+        "at_bat_number": df["at_bat_number"],
+        "pitcher": df["pitcher"],
+        "pitch_number": df["pitch_number"],
+        "x_tunnel": x_tunnel,
+        "z_tunnel": z_tunnel,
+    })
+    tun_sorted = tun.sort_values(["game_pk", "at_bat_number", "pitcher", "pitch_number"])
+    grp = tun_sorted.groupby(["game_pk", "at_bat_number", "pitcher"], sort=False)
+    x_prev = grp["x_tunnel"].shift(1).reindex(df.index)
+    z_prev = grp["z_tunnel"].shift(1).reindex(df.index)
+
+    df["tunnel_distance"] = np.sqrt((x_tunnel - x_prev)**2 + (z_tunnel - z_prev)**2).astype("float32")
+    df["is_first_pitch_for_pitcher_in_ab"] = x_prev.isna().astype("int8")
+    n_valid = df["tunnel_distance"].notna().sum()
+    print(f"Tunnel distance: {n_valid:,} rows ({n_valid/len(df)*100:.1f}%), median {df['tunnel_distance'].median():.3f} ft")
+
 print(f"Feature engineering complete: {len(df):,} rows, {len(df.columns)} columns")
 
 # %%
@@ -349,6 +396,9 @@ OPTIONAL_IMPUTE = [
     "vx0", "vy0", "vz0", "ax", "ay", "az",
     "time_to_plate", "late_break_z", "late_break_x",
     "approach_angle_z", "approach_angle_x", "accel_magnitude",
+    # tunnel_distance deliberately excluded: NaNs are structural (~25%, first
+    # pitch per pitcher per AB) and postseason samples are small — a whole-
+    # dataset median would be noisy. XGBoost handles the NaNs natively.
 ]
 OPTIONAL_IMPUTE = [c for c in OPTIONAL_IMPUTE if c in df.columns]
 

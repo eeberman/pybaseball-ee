@@ -48,7 +48,7 @@ MIN_PITCHES_ZONE = 10      # Minimum pitches per zone
 # Paths - inputs
 STEP1_PATH = Path("data/processed") / "statcast_step1_swing_take.parquet"
 STEP2_PATH = Path("data/processed") / "statcast_step2_whiff_contact.parquet"
-RAW_PATH = Path("data/raw") / "statcast_2023-04-01_2024-11-05.parquet"
+RAW_PATH = Path("data/raw") / "statcast_2023-04-01_2023-10-01.parquet"
 
 MODEL_DIR = Path("artifacts/models")
 MODEL2_PATH = MODEL_DIR / "model2_whiff_contact.json"
@@ -130,8 +130,9 @@ if "game_type" in raw_team.columns:
     raw_team = raw_team[raw_team["game_type"] == "R"].copy()
     print(f"Filtered to regular season: {len(raw_team):,} rows")
 
-raw_2024 = raw_team[raw_team["game_date"] >= "2024-01-01"].copy()
-print(f"Filtered to 2024: {len(raw_2024):,} rows")
+test_start = step1_2024["game_date"].min()
+raw_2024 = raw_team[raw_team["game_date"] >= test_start].copy()
+print(f"Filtered to test season (>= {test_start.date()}): {len(raw_2024):,} rows")
 
 # Extract team for each pitcher from their most recent game
 has_team_cols = "home_team" in raw_2024.columns and "away_team" in raw_2024.columns
@@ -556,7 +557,7 @@ for _, row in overall_qualified.iterrows():
 
 overall_json = {
     "last_updated": pd.Timestamp.now().strftime("%Y-%m-%d"),
-    "season": "2024",
+    "season": "2023",
     "min_pitches": MIN_PITCHES_RS,
     "pitchers": pitchers_list,
 }
@@ -661,7 +662,7 @@ print("\n=== BUILDING metadata.json ===")
 
 metadata = {
     "last_updated": pd.Timestamp.now().isoformat(),
-    "seasons_included": ["2024"],
+    "seasons_included": ["2023"],
     "total_pitchers_rs": len(overall_qualified),
     "total_pitches_rs": int(step1_2024[step1_2024["pitcher"].isin(qualified_pitcher_ids)]["pitcher"].count()),
     "total_swings_rs": int(step2_2024[step2_2024["pitcher"].isin(qualified_pitcher_ids)]["pitcher"].count()),

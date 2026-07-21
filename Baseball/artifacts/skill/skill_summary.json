@@ -1,0 +1,136 @@
+{
+  "data": {
+    "test_set_size": 60165,
+    "date_range": "2023-09-01 00:00:00 to 2023-10-01 00:00:00",
+    "unique_batters_raw": 497,
+    "unique_pitchers_raw": 582
+  },
+  "filters": {
+    "min_swings_batter": 50,
+    "min_swings_pitcher": 100
+  },
+  "batter_stats": {
+    "n_batters": 400,
+    "mean_contact_skill": -0.0009422144783583164,
+    "std_contact_skill": 0.06608548365290835,
+    "min_contact_skill": -0.20163272904981044,
+    "max_contact_skill": 0.20698886684009007,
+    "expected_vs_actual_correlation": 0.4360970702335421,
+    "top_5_batters": [
+      {
+        "batter": 676391,
+        "n_swings": 56,
+        "contact_skill": 0.20698886684009007
+      },
+      {
+        "batter": 683021,
+        "n_swings": 64,
+        "contact_skill": 0.19073450565338135
+      },
+      {
+        "batter": 663611,
+        "n_swings": 95,
+        "contact_skill": 0.15738578925007268
+      },
+      {
+        "batter": 650333,
+        "n_swings": 144,
+        "contact_skill": 0.15279248853524527
+      },
+      {
+        "batter": 686823,
+        "n_swings": 163,
+        "contact_skill": 0.15001340512117725
+      }
+    ],
+    "bottom_5_batters": [
+      {
+        "batter": 676914,
+        "n_swings": 137,
+        "contact_skill": -0.15748672383110018
+      },
+      {
+        "batter": 677592,
+        "n_swings": 124,
+        "contact_skill": -0.1606672002423194
+      },
+      {
+        "batter": 676116,
+        "n_swings": 221,
+        "contact_skill": -0.17806878052146186
+      },
+      {
+        "batter": 665120,
+        "n_swings": 78,
+        "contact_skill": -0.1923648692094363
+      },
+      {
+        "batter": 572204,
+        "n_swings": 97,
+        "contact_skill": -0.20163272904981044
+      }
+    ]
+  },
+  "pitcher_stats": {
+    "n_pitchers": 228,
+    "mean_whiff_skill": -0.002345647990261426,
+    "std_whiff_skill": 0.0393912990170073,
+    "min_whiff_skill": -0.0987176991115182,
+    "max_whiff_skill": 0.12853303822604095,
+    "expected_vs_actual_correlation": 0.676780213225271,
+    "top_5_pitchers": [
+      {
+        "pitcher": 600917,
+        "n_swings": 110,
+        "whiff_skill": 0.12853303822604095
+      },
+      {
+        "pitcher": 668674,
+        "n_swings": 101,
+        "whiff_skill": 0.12309523133358152
+      },
+      {
+        "pitcher": 687830,
+        "n_swings": 157,
+        "whiff_skill": 0.09993537757427068
+      },
+      {
+        "pitcher": 664208,
+        "n_swings": 102,
+        "whiff_skill": 0.09373950315456764
+      },
+      {
+        "pitcher": 643338,
+        "n_swings": 109,
+        "whiff_skill": 0.09337196875055997
+      }
+    ],
+    "bottom_5_pitchers": [
+      {
+        "pitcher": 607536,
+        "n_swings": 109,
+        "whiff_skill": -0.07611957534190711
+      },
+      {
+        "pitcher": 681190,
+        "n_swings": 144,
+        "whiff_skill": -0.07771523462401497
+      },
+      {
+        "pitcher": 547179,
+        "n_swings": 144,
+        "whiff_skill": -0.0810560385386149
+      },
+      {
+        "pitcher": 608717,
+        "n_swings": 108,
+        "whiff_skill": -0.09179806433342122
+      },
+      {
+        "pitcher": 607644,
+        "n_swings": 177,
+        "whiff_skill": -0.0987176991115182
+      }
+    ]
+  }
+}
